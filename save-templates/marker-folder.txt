@@ -1,0 +1,11 @@
+
+საბოლოო ვერსია: {{VER}} ({{DATE}})
+
+დაბლოკირებული snapshot (არ შეცვალო):
+
+- index-{{VER}}.html
+- theme-{{VER}}.css
+
+მუშა ვერსია: index.html
+
+სრული ფოლდერი: W2 APP\prototype-{{VER}}\

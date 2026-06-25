@@ -1,0 +1,11 @@
+
+საბოლოო ვერსია: v8-final (2026-06-08)
+
+დაბლოკირებული snapshot (არ შეცვალო):
+
+- index-v8-final.html
+- theme-v8-final.css
+
+მუშა ვერსია: index.html
+
+სრული ფოლდერი: W2 APP\prototype-v8-final\

@@ -1,0 +1,7 @@
+﻿
+წინა snapshot: v1.6-final
+
+- index-v1.6-final.html
+- theme-v1.6-final.css
+
+სრული ფოლდერი: ..\prototype-v1.6-final\

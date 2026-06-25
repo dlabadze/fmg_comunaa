@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <title>FMG Community · v8 · fin-b61</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Georgian:wght@400;500&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="theme.css?v=68" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg-page);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 12px 24px;color:var(--text)}
+    .screen-nav{display:none!important}
+    .screen-nav button{font-family:inherit;font-size:.72rem;padding:6px 12px;border:none;background:var(--surface);border-radius:var(--radius-pill);cursor:pointer;box-shadow:var(--shadow)}
+    .screen-nav button.active{background:var(--text);color:#fff}
+    .phone{width:390px;height:844px;max-width:100%;background:var(--bg);border-radius:48px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(21,37,59,.14),0 6px 16px rgba(21,37,59,.08),inset 0 0 0 2px #d6d3d1;display:flex;flex-direction:column}
+    .phone:has(.screen:not(.screen-auth).active){background:var(--app-bg-fade)}
+    .screen-content{flex:1;position:relative;overflow:hidden;min-height:0}
+    .screen{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:border-box;display:none!important;visibility:hidden;pointer-events:none}
+    .screen:not(.screen-auth){scroll-padding-bottom:var(--scroll-pad-bottom);padding-bottom:var(--scroll-pad-bottom)}
+    .screen.active{display:block!important;visibility:visible;pointer-events:auto}
+    .screen.active[data-screen="project-detail"]{display:flex!important;flex-direction:column;overflow:hidden!important;overflow-y:hidden!important;min-height:0}
+    .screen.screen-auth.active{bottom:0;display:flex!important;flex-direction:column;min-height:100%}
+    .app-topbar{flex-shrink:0;display:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px 16px 14px;background:var(--chrome-dark);z-index:15;border-radius:0}
+    .app-topbar.visible{display:flex}
+    .app-topbar-brand{position:relative;flex:1;min-width:0;height:40px}
+    .brand-wordmark{display:flex;align-items:center;gap:11px;min-width:0}
+    .brand-wordmark--header{display:flex;align-items:center;height:40px;width:auto;max-width:min(72vw,210px);margin-left:0}
+    .brand-lockup{display:block;object-fit:contain;object-position:left center;flex-shrink:0}
+    .brand-lockup--header{height:34px;width:auto;max-width:100%}
+    .brand-lockup--login{height:42px;width:auto;max-width:min(88vw,240px);margin-bottom:18px}
+    .brand-mark{width:36px;height:36px;flex-shrink:0;display:block}
+    .brand-mark--icon{width:36px;height:36px;object-fit:contain;object-position:left center}
+    .brand-wordmark--header .brand-mark,.brand-wordmark--header .brand-mark--icon{width:36px;height:36px}
+    .brand-mark path{stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round;fill:none;paint-order:stroke}
+    .brand-wordmark--header .brand-mark-fade{stroke:rgba(255,255,255,.34)}
+    .brand-wordmark--header .brand-mark-strong{stroke:#fff}
+    .brand-wordmark--login{gap:8px}
+    .brand-wordmark--login .brand-mark-fade{stroke:#B8C3CE}
+    .brand-wordmark--login .brand-mark-strong{stroke:currentColor}
+    .brand-name{display:flex;flex-direction:column;justify-content:center;gap:2px;line-height:1.04;min-width:0}
+    .brand-name-line{font-family:var(--font-brand);font-size:.93rem;font-weight:400;letter-spacing:.06em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    .brand-wordmark--header{color:var(--chrome-on-dark)}
+    .brand-wordmark--login{margin-bottom:18px;color:var(--text)}
+    .brand-wordmark--login .brand-mark{width:42px;height:42px}
+    .brand-wordmark--login .brand-name-line{font-size:1.06rem;letter-spacing:.065em}
+    .app-topbar-actions{display:flex;align-items:center;gap:18px;flex-shrink:0}
+    .app-topbar-btn{width:36px;height:36px;border:none;background:transparent;color:var(--chrome-on-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .app-topbar-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .app-topbar-btn--mint{background:var(--mint-light);color:var(--mint-on);border-radius:50%;width:40px;height:40px;flex-shrink:0;cursor:pointer;border:none;font-family:inherit;padding:0;text-decoration:none;display:flex;align-items:center;justify-content:center}
+    .app-topbar-btn--mint svg{width:26px;height:26px}
+    .app-topbar-btn[data-goto="notifications"]{background:transparent;color:var(--chrome-on-dark);border-radius:0}
+    .screen:not(.screen-auth){min-height:100%;background:var(--app-bg-fade)}
+    .home-hero-wrap{padding:10px 16px 0;background:transparent}
+    .page-pad.home-pad{background:transparent}
+    .home-card{background:var(--surface);border-radius:14px;padding:16px;border:1px solid var(--border);width:100%}
+    .home-card.projects-card{padding:10px 0 8px;margin-bottom:0;background:linear-gradient(180deg,var(--fade-gray-light) 0%,var(--fade-gray) 52%,var(--fade-gray-deep) 100%);border:1px solid var(--fade-gray-border);box-shadow:none}
+    .screen[data-screen="home"] .home-card.projects-card{padding:10px 8px 8px;border-radius:14px}
+    .screen-auth.active{display:flex!important;flex-direction:column;min-height:100%;position:relative;overflow:hidden}
+    .login-bg-slideshow{position:absolute;inset:0;z-index:0;background:var(--chrome-dark)}
+    .login-bg-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
+    .login-bg-slide.on{opacity:1}
+    .login-bg-slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+    .login-bg-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(15,28,42,.2) 0%,rgba(15,28,42,.38) 55%,rgba(15,28,42,.55) 100%);pointer-events:none}
+    .login-panel{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:72px 22px 28px;box-sizing:border-box}
+    .login-brand-top{position:absolute;top:28px;left:0;right:0;text-align:center;z-index:3}
+    .login-brand-top .brand-lockup--login{height:40px;margin-bottom:0}
+    .login-form-wrap{width:100%;max-width:300px;display:flex;flex-direction:column;align-items:center}
+    .login-form-card{width:100%;padding:22px 18px 16px;border-radius:20px;background:rgba(255,255,255,.18);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.32);box-shadow:0 8px 32px rgba(15,28,42,.18)}
+    .login-field{margin-bottom:12px}
+    .login-field label{display:block;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.92);margin-bottom:6px;text-shadow:0 1px 2px rgba(0,0,0,.2)}
+    .login-field input{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,.38);border-radius:12px;font-family:inherit;font-size:.92rem;background:rgba(255,255,255,.28);color:var(--text);box-sizing:border-box}
+    .login-field input::placeholder{color:rgba(28,25,23,.45)}
+    .login-field input:focus{outline:none;border-color:rgba(255,255,255,.65);background:rgba(255,255,255,.42);box-shadow:0 0 0 2px rgba(143,216,188,.35)}
+    .login-btn{width:100%;margin-top:4px;padding:14px;border:none;border-radius:var(--radius-pill);background:rgba(13,148,136,.88);color:#fff;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;backdrop-filter:blur(6px)}
+    .login-btn:active{opacity:.92}
+    .login-links{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:0 4px;width:100%;max-width:300px}
+    .login-link{font-size:.8rem;font-weight:600;color:#fff;background:none;border:none;font-family:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:6px 0;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+    .login-link:active{opacity:.85}
+    .projects-carousel{position:relative}
+    .projects-carousel .projects-scroll{padding:0 38px 6px}
+    .projects-scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:34px;height:34px;border:none;border-radius:50%;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.72);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(28,25,23,.1);padding:0;font-family:inherit}
+    .projects-scroll-arrow svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .projects-scroll-arrow--prev{left:4px}
+    .projects-scroll-arrow--next{right:4px}
+    .projects-scroll-arrow:active:not(:disabled){background:rgba(255,255,255,.78)}
+    .projects-scroll-arrow:disabled{opacity:.32;cursor:default}
+    .screen.active[data-screen="home"]{display:flex!important;flex-direction:column;overflow:hidden!important;min-height:0;padding-bottom:0;scroll-padding-bottom:0}
+    .page-pad.home-pad{display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-padding-bottom:var(--scroll-pad-bottom);gap:10px;padding:var(--pad-page-y) var(--pad-page-x) var(--scroll-pad-bottom);box-sizing:border-box}
+    .page-pad.home-pad>.home-card,.page-pad.home-pad>.quick-grid,.page-pad.home-pad>.home-partners-block,.page-pad.home-pad>.home-events-block,.page-pad.home-pad>.qi-card-promo{margin:0}
+    .home-partners-block{flex:0 0 auto;overflow:visible;min-width:0;width:100%}
+    .home-partners-carousel{position:relative;margin:0;width:100%}
+    .home-partners-carousel .projects-scroll-arrow{width:28px;height:28px}
+    .home-partners-carousel .projects-scroll-arrow svg{width:16px;height:16px}
+    .home-partners-carousel .projects-scroll-arrow--prev{left:0}
+    .home-partners-carousel .projects-scroll-arrow--next{right:0}
+    .home-partners-carousel .home-partners-scroll{padding:0 0 2px;scroll-padding-left:0;scroll-padding-right:12px}
+    .home-partners-scroll{display:flex;gap:8px;align-items:flex-start;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none}
+    .home-partners-scroll::-webkit-scrollbar{display:none}
+    .home-story-wrap{flex:0 0 auto;width:108px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center}
+    .home-story-card{width:100%;border:none;background:transparent;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;padding:0;transition:transform .18s ease}
+    .home-story-card:active{transform:scale(.98)}
+    .home-story-border{display:block;padding:3px;border-radius:14px;background:#E5E1D9;box-sizing:border-box}
+    .home-story-card--hot .home-story-border{background:linear-gradient(160deg,#F7D154 0%,#E8A820 45%,#D49212 100%)}
+    .home-story-inner{position:relative;display:block;width:102px;height:124px;border-radius:11px;overflow:hidden;background:#1a2f47}
+    .home-story-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+    .home-story-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,28,42,.2) 0%,rgba(15,28,42,.5) 42%,rgba(15,28,42,.78) 100%);pointer-events:none}
+    .home-story-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px 6px;box-sizing:border-box}
+    .home-story-lbl{font-size:.5rem;font-weight:500;color:rgba(255,255,255,.92);line-height:1.15;margin:0 0 4px}
+    .home-story-pct{font-family:var(--font-brand);font-size:1.42rem;font-weight:800;color:#F5C842;line-height:1;text-shadow:0 2px 10px rgba(0,0,0,.35);letter-spacing:-.02em}
+    .home-story-meta{font-size:.5rem;font-weight:600;color:#fff;line-height:1.25;margin:5px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .home-section-title{font-size:.88rem;font-weight:700;color:var(--text);margin:0 0 6px;padding:0}
+    .qi-card-promo{display:block;width:100%;flex-shrink:0;border:none;padding:0;margin:0;border-radius:12px;overflow:hidden;cursor:pointer;background:var(--surface);font-family:inherit;border:1px solid var(--border);box-shadow:var(--shadow);transition:transform .18s ease}
+    .qi-card-promo img{display:block;width:100%;height:auto;vertical-align:middle}
+    .qi-card-promo:active{transform:scale(.98)}
+    .home-events-list{display:flex;flex-direction:column;gap:8px}
+    .screen[data-screen="home"] .greet-card,.screen[data-screen="home"] .manager-card{flex:0 0 auto}
+    .screen[data-screen="home"] .quick-grid{flex:0 0 auto}
+    .screen[data-screen="home"] .quick-card{min-height:82px;padding:12px 6px}
+    .screen[data-screen="home"] .home-events-block{flex:0 0 auto;display:flex;flex-direction:column}
+    .screen[data-screen="home"] .home-events-list{flex:0 0 auto}
+    .screen[data-screen="home"] .home-events-list .comm-event{padding:12px 14px}
+    .screen[data-screen="home"] .home-pad{justify-content:flex-start;gap:10px}
+    .greet-card h1{font-size:1.12rem;font-weight:700;margin-bottom:6px}
+    .greet-card .unit-project{font-size:.9rem;font-weight:700;color:var(--text);margin:0 0 4px}
+    .greet-card .unit{font-size:.78rem;color:var(--text-muted);margin:0}
+    .manager-card{padding:14px 16px}
+    .manager-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .manager-lbl{display:block;font-size:.72rem;color:var(--text-muted);margin-bottom:3px}
+    .manager-name{font-size:.92rem;font-weight:700}
+    .manager-actions{display:flex;gap:8px;flex-shrink:0}
+    .manager-icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface-muted);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-family:inherit;padding:0}
+    .manager-icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none}
+    .manager-icon-btn:active{opacity:.85}
+    .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .quick-card{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:88px;padding:14px 8px;background:var(--surface);border-radius:14px;border:1px solid var(--border);font-family:inherit;cursor:pointer;transition:transform .18s ease}
+    .quick-card .bubble{width:42px;height:42px;border-radius:12px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--surface-muted);font-size:1.15rem;line-height:1}
+    .quick-card span{font-size:.68rem;font-weight:600;color:var(--text)}
+    @media (hover:hover){
+      .quick-card:hover,.feed-card:hover,.offer-card:hover,.menu-link:hover,.project-card:hover,.project-card-lg:hover{transform:scale(1.03)}
+      .tab:hover .ic{transform:scale(1.06)}
+    }
+    .screen[data-screen="access"].active{display:flex!important;flex-direction:column;min-height:100%}
+    .access-shell{flex:1;display:flex;flex-direction:column;min-height:100%}
+    .access-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 20px 32px;min-height:0}
+    .access-wrap{display:flex;flex-direction:column;align-items:center;gap:0;width:100%;max-width:320px;margin-top:-28px}
+    .access-page-title{font-size:1.5rem;font-weight:700;margin:-36px 0 20px;text-align:center;width:100%}
+    .access-main{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+    .access-title{font-size:.96rem;font-weight:700;color:var(--text);margin:0;text-align:center}
+    .access-sub{font-size:.76rem;color:var(--text-muted);margin:0}
+    .access-code-card{width:min(320px,100%);background:var(--surface);border-radius:18px;padding:10px;text-align:center;box-shadow:0 10px 28px rgba(15,23,42,.12),0 2px 8px rgba(15,23,42,.06);border:1px solid rgba(15,23,42,.08)}
+    .access-code-frame{border-radius:14px;padding:20px 18px;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);box-shadow:inset 0 2px 4px rgba(255,255,255,.95),inset 0 -3px 8px rgba(15,23,42,.07),0 1px 0 rgba(255,255,255,.85);border:1px solid rgba(15,23,42,.1);border-top-color:rgba(255,255,255,.95);border-left-color:rgba(255,255,255,.8);border-bottom-color:rgba(15,23,42,.14);border-right-color:rgba(15,23,42,.1)}
+    .access-code{font-size:3rem;line-height:1;font-weight:700;color:var(--mint-on);letter-spacing:.08em;text-shadow:0 1px 0 rgba(255,255,255,.9),0 2px 6px rgba(26,82,72,.14)}
+    .access-actions{display:flex;justify-content:center;gap:48px;width:100%;padding-top:4px;margin-top:2px}
+    .access-action{display:flex;flex-direction:column;align-items:center;gap:5px}
+    .access-action-btn{width:46px;height:46px;border-radius:50%;border:none;background:var(--mint);color:var(--mint-on);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(143,216,188,.45)}
+    .access-action-btn:active{transform:scale(.97)}
+    .access-action-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
+    .access-action-lbl{font-size:.66rem;font-weight:600;color:var(--text-muted)}
+    .home-feed{display:flex;flex-direction:column;gap:10px;padding-bottom:28px}
+    .feed-card--static{cursor:default}
+    .feed-card--static:hover{transform:none}
+    .feed-card{background:var(--surface);border-radius:14px;padding:14px 16px;border:1px solid var(--border);width:100%;text-align:left;font-family:inherit;cursor:pointer;transition:transform .18s ease}
+    .home-feed .feed-card .tag{display:inline-block;border-radius:var(--radius-pill);padding:4px 10px;font-size:.72rem;font-weight:700;margin-bottom:8px}
+    .tag{display:inline-block;font-size:.65rem;font-weight:600;padding:3px 9px;border-radius:var(--radius-pill);margin-bottom:8px}
+    .tag-teal{background:var(--pastel-teal-bg);color:var(--pastel-teal-on);border:1px solid rgba(42,107,95,.14)}
+    .tag-violet{background:var(--pastel-violet-bg);color:var(--pastel-violet-on);border:1px solid rgba(107,79,158,.14)}
+    .feed-card h4{font-size:.9rem;font-weight:600;margin-bottom:3px;color:var(--text)}
+    .feed-card p{font-size:.78rem;color:var(--text-muted);line-height:1.35}
+    .offers-feed{display:flex;flex-direction:column;gap:10px;padding:0 16px 20px}
+    .offer-card{display:flex;flex-direction:row;gap:0;align-items:stretch;padding:0;overflow:hidden;text-decoration:none;color:inherit;min-width:0;width:100%}
+    .offer-card-img{flex:0 0 92px;width:92px;min-height:92px;align-self:stretch;background-size:cover;background-position:center;background-color:var(--surface-muted)}
+    .offer-card-body{flex:1;min-width:0;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+    .offer-card .tag{align-self:flex-start;margin-bottom:6px}
+    .offer-card h4{font-size:.86rem;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .offer-card p{font-size:.74rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .tab-page-head{padding:14px 20px 6px;background:transparent}
+    .tab-page-head h2{font-size:1.1rem;font-weight:700;margin:0}
+    .sub-nav{display:flex;align-items:center;gap:8px;padding:12px 20px;background:transparent;position:sticky;top:0;z-index:10}
+    .sub-nav h2{font-size:1.08rem;font-weight:700;margin:0;flex:1;min-width:0}
+    .sub-nav button{border:none;background:none;font-size:1.25rem;cursor:pointer;font-family:inherit;flex-shrink:0}
+    .balance{background:var(--surface);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow);margin-bottom:14px;text-align:center}
+    .balance .sum{font-size:1.75rem;font-weight:700}
+    .pay-tabs{display:flex;gap:4px;padding:4px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:999px}
+    .pay-tab{flex:1;padding:10px 16px;border:none;border-radius:999px;background:transparent;font-family:inherit;font-size:.82rem;color:var(--text-muted);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+    .pay-tab.on{background:var(--pearl);color:var(--mint-on);font-weight:600;box-shadow:none}
+    .screen[data-screen="service"] .pay-tabs .pay-tab:not(.on),.screen[data-screen="ticketing"] .pay-tabs .pay-tab:not(.on){color:var(--text-muted);background:transparent;box-shadow:none}
+    .screen[data-screen="service"] .pay-tabs .pay-tab.on,.screen[data-screen="ticketing"] .pay-tabs .pay-tab.on,.screen[data-screen="payments"] .pay-tabs .pay-tab.on,.screen[data-screen="ticketing"] #ticketNewForm .service-submit{background:var(--pastel-mint-bg);color:var(--pastel-mint-on);font-weight:600;box-shadow:none}
+    .pay-panel[data-pay-panel]{display:none}
+    .pay-panel[data-pay-panel].active{display:block}
+    .tab-page-hint{font-size:.76rem;color:var(--text-muted);line-height:1.45;padding:0 20px 10px;margin:0}
+    .screen[data-screen="ticketing"] .tab-page-head h2{font-size:1.25rem}
+    .screen[data-screen="service"] .tab-page-hint,.screen[data-screen="ticketing"] .tab-page-hint,.screen[data-screen="construction-progress"] .tab-page-hint{font-style:italic}
+    .flow-badge{display:inline-block;font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:var(--radius-pill);margin-bottom:6px}
+    .flow-badge--service{background:var(--primary-soft);color:var(--primary-dark)}
+    .flow-crosslink{display:block;width:100%;margin-top:12px;padding:12px 14px;border:1px dashed var(--border);border-radius:12px;background:var(--surface-muted);font-family:inherit;font-size:.78rem;font-weight:600;color:var(--primary-dark);cursor:pointer;text-align:center}
+    .service-panel{display:none}
+    .service-panel.active{display:block}
+    .service-sticky-head{position:sticky;top:0;z-index:12;background:var(--bg);padding-bottom:10px;box-shadow:0 1px 0 transparent}
+    .service-sticky-head.is-stuck{box-shadow:0 4px 12px rgba(15,23,42,.06)}
+    .service-sticky-tabs{padding:0 20px}
+    .service-sticky-tabs .pay-tabs{margin-bottom:0}
+    .service-body{padding-top:0}
+    .service-catalog{display:flex;flex-direction:column;gap:8px;padding:0 4px 16px}
+    .service-catalog-item{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border-radius:14px;border:1px solid var(--border);font-family:inherit;font-size:.88rem;font-weight:600;color:var(--text);cursor:pointer;text-align:left;box-shadow:var(--shadow)}
+    .service-catalog-item:active{opacity:.9}
+    .service-catalog-item .service-chev{margin-left:auto;color:var(--text-muted);font-size:1.1rem;flex-shrink:0}
+    .service-requests{display:flex;flex-direction:column;gap:8px}
+    .service-req-card{padding:14px 16px;background:var(--surface);border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .service-req-card h4{font-size:.88rem;font-weight:700;margin:0 0 6px;color:var(--text)}
+    .service-req-meta{font-size:.74rem;color:var(--text-muted);margin:0 0 4px;line-height:1.4}
+    .service-req-status{display:inline-block;margin-top:8px;font-size:.68rem;font-weight:700;padding:4px 10px;border-radius:var(--radius-pill)}
+    .service-req-status--new{background:var(--primary-soft);color:var(--primary-dark)}
+    .service-req-status--processing{background:#FEF3C7;color:#B45309}
+    .service-req-status--ordered{background:#DBEAFE;color:#1D4ED8}
+    .service-req-status--done{background:#D1FAE5;color:#047857}
+    .service-req-empty{font-size:.82rem;color:var(--text-muted);padding:12px 4px 4px}
+    .service-form{display:flex;flex-direction:column;gap:14px}
+    .service-field{display:flex;flex-direction:column;gap:6px}
+    .service-field label{font-size:.78rem;font-weight:600;color:var(--text-muted)}
+    .service-field input,.service-field textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;font-family:inherit;font-size:.88rem;background:var(--surface);color:var(--text)}
+    .service-field textarea{min-height:100px;resize:vertical}
+    .datetime-picker{position:relative}
+    .datetime-picker-control{display:flex;align-items:stretch;gap:0}
+    .datetime-picker-display{flex:1;border-radius:12px 0 0 12px!important;cursor:pointer}
+    .datetime-picker-trigger{flex-shrink:0;width:46px;border:1px solid var(--border);border-left:none;border-radius:0 12px 12px 0;background:var(--surface-muted);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .datetime-picker-trigger svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+    .datetime-picker-trigger:active{opacity:.85}
+    .datetime-picker-popover{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:40;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 28px rgba(15,28,42,.14);padding:12px}
+    .datetime-picker-popover[hidden]{display:none}
+    .dtp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+    .dtp-head button{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:var(--surface-muted);font-family:inherit;font-size:1rem;cursor:pointer;color:var(--text)}
+    .dtp-head-title{flex:1;text-align:center;font-size:.82rem;font-weight:700;color:var(--text)}
+    .dtp-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
+    .dtp-weekdays span{font-size:.58rem;font-weight:700;color:var(--text-muted);text-align:center}
+    .dtp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+    .dtp-day{aspect-ratio:1;border:none;border-radius:8px;background:transparent;font-family:inherit;font-size:.72rem;font-weight:600;color:var(--text);cursor:pointer}
+    .dtp-day:hover:not(:disabled){background:var(--primary-soft)}
+    .dtp-day.on{background:var(--pastel-mint-bg);color:var(--pastel-mint-on)}
+    .dtp-day.out{color:var(--text-muted);opacity:.45}
+    .dtp-day:disabled{opacity:.28;cursor:not-allowed}
+    .dtp-time{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+    .dtp-time label{font-size:.72rem;font-weight:600;color:var(--text-muted)}
+    .dtp-time select{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:.82rem;background:var(--surface);color:var(--text)}
+    .dtp-apply{width:100%;margin-top:10px;padding:10px;border:none;border-radius:var(--radius-pill);background:var(--pastel-mint-bg);color:var(--pastel-mint-on);font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+    .service-submit{width:100%;padding:14px;border:none;border-radius:var(--radius-pill);background:var(--primary);color:#fff;font-family:inherit;font-size:.92rem;font-weight:700;cursor:pointer}
+    .service-submit:active{opacity:.9}
+    .screen[data-screen="ticketing"] #ticketNewForm .service-submit{font-size:.82rem;padding:10px 16px}
+    .ticket-panel{display:none}
+    .ticket-panel.active{display:block}
+    .ticket-upload{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:1.5px dashed var(--border);border-radius:12px;background:var(--surface-muted);font-size:.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;text-align:center}
+    .ticket-upload input{display:none}
+    .ticket-upload.has-file{border-color:var(--primary);color:var(--primary-dark);background:var(--primary-soft);border-style:solid}
+    .ticket-files-hint{font-size:.72rem;color:var(--text-muted);margin-top:6px}
+    .ticket-id-lbl{font-size:.68rem;color:var(--text-muted);font-weight:600;margin-bottom:4px}
+    .comm-event{display:flex;gap:12px;padding:14px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:none;font-family:inherit;text-align:left;cursor:pointer;width:100%}
+    .comm-event-date{flex-shrink:0;width:48px;text-align:center;padding:8px 6px;border-radius:12px;background:var(--primary-soft);color:var(--primary-dark)}
+    .comm-event-date strong{display:block;font-size:1rem;line-height:1.1}
+    .comm-event-date span{font-size:.62rem;font-weight:600}
+    .comm-event-body{flex:1;min-width:0}
+    .comm-event-body h4{font-size:.92rem;font-weight:600;margin-bottom:4px}
+    .comm-event-body p{font-size:.78rem;color:var(--text-muted)}
+    .fin-balance-card{background:var(--surface);border-radius:var(--radius-lg);padding:20px 18px;box-shadow:var(--shadow);text-align:center;margin-bottom:var(--gap-stack)}
+    .fin-balance-lbl{display:block;font-size:.82rem;color:var(--text-muted);margin-bottom:6px}
+    .fin-balance-sum{font-size:1.85rem;font-weight:700}
+    .pay-due-list{display:flex;flex-direction:column;gap:var(--gap-stack)}
+    .pay-due-item{display:flex;align-items:flex-start;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);font-family:inherit;text-align:left;cursor:pointer;box-shadow:var(--shadow)}
+    .pay-due-item .pay-due-body{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .pay-due-item strong{display:block;font-size:.92rem;margin-bottom:0}
+    .pay-due-item .pay-due-amt{font-weight:700;color:var(--text);font-size:.88rem;white-space:nowrap;flex-shrink:0}
+    .pay-due-item .pay-due-amt.is-zero,.pay-due-item .pay-due-amt.is-debt{color:var(--text)}
+    .pay-due-item .pay-due-amt.is-credit{color:var(--pastel-mint-on)}
+    .pay-due-expand{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+    .pay-due-expand.overdue{border-color:rgba(220,38,38,.22)}
+    .pay-due-expand .pay-due-item{border:none;border-radius:0;box-shadow:none;align-items:center}
+    .pay-due-expand .pay-due-detail{display:none;border-top:1px solid var(--border)}
+    .pay-due-expand.open .pay-due-detail{display:block}
+    .pay-due-expand .pay-chev{width:18px;height:18px;flex-shrink:0;color:var(--text-muted);transition:transform .2s;margin-left:4px}
+    .pay-due-expand.open .pay-chev{transform:rotate(180deg)}
+    .pay-due-detail .fin-schedule-card{border:none;border-radius:0;box-shadow:none}
+    .fin-property-stack{display:flex;flex-direction:column;gap:12px}
+    .fin-property-summary{background:var(--surface);border-radius:14px;border:1px solid var(--border);overflow:hidden}
+    .fin-pay-head-block{margin-bottom:var(--gap-stack);box-shadow:var(--shadow)}
+    .fin-schedule-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);overflow:hidden}
+    .fin-install-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);font-size:.78rem}
+    .fin-property-summary .fin-install-summary{border-bottom:none}
+    .fin-install-lbl{color:var(--text-muted);font-weight:600}
+    .fin-install-val{font-weight:700;text-align:right;white-space:nowrap}
+    .fin-install-summary{padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px}
+    .fin-install-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.78rem}
+    .fin-install-val,.fin-install-remain,.fin-install-next{color:var(--text)}
+    .fin-install-accrued,.fin-install-paid{color:var(--pastel-mint-on);background:var(--pastel-mint-bg);padding:3px 10px;border-radius:var(--radius-pill)}
+    .fin-table-head,.fin-table-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 10px;align-items:center}
+    .fin-table-head{font-size:.8rem;font-weight:800;color:var(--text);background:var(--surface-muted);border-bottom:1px solid var(--border)}
+    .fin-table-row{font-size:.68rem}
+    .fin-table-head span:nth-child(1),.fin-table-date{text-align:left}
+    .fin-table-head span:nth-child(2),.fin-table-head span:nth-child(3),.fin-table-head span:nth-child(4),.fin-table-install,.fin-table-pay,.fin-table-balance{text-align:right}
+    .fin-table-row{border-bottom:1px solid var(--border)}
+    .fin-table-row:last-child{border-bottom:none}
+    .fin-table-date{color:var(--text);font-size:.74rem}
+    .fin-table-install,.fin-table-pay{font-weight:700;white-space:nowrap}
+    .fin-table-install,.fin-table-pay,.fin-table-balance{color:var(--text)}
+    .fin-table-balance{font-weight:700;white-space:nowrap}
+    .fin-table-balance.is-ok,.fin-table-balance.is-debt,.fin-table-balance.is-overdue,.fin-table-balance.is-future{color:var(--text)}
+    .fin-table-balance.is-credit{color:var(--pastel-mint-on)}
+    .screen[data-screen="payments"] .fin-install-val:not(.fin-install-paid):not(.fin-install-accrued),.screen[data-screen="payments"] .pay-due-amt:not(.is-credit),.screen[data-screen="payments"] .fin-table-install,.screen[data-screen="payments"] .fin-table-pay:not(.is-paid),.screen[data-screen="payments"] .fin-table-balance:not(.is-credit){color:var(--text)!important}
+    .screen[data-screen="payments"] .fin-install-accrued,.screen[data-screen="payments"] .fin-install-paid{color:var(--pastel-mint-on)!important;background:var(--pastel-mint-bg)!important}
+    .screen[data-screen="payments"] .fin-table-pay.is-paid,.screen[data-screen="payments"] .pay-due-amt.is-credit,.screen[data-screen="payments"] .fin-table-balance.is-credit{color:var(--pastel-mint-on)!important}
+    .fin-table-row.is-hidden{display:none}
+    .fin-table-more-btn{display:block;width:100%;padding:11px 12px;border:none;border-top:1px solid var(--border);background:var(--surface-muted);font-family:inherit;font-size:.76rem;font-weight:600;color:var(--primary-dark);cursor:pointer}
+    .fin-table-more-btn:active{opacity:.85}
+    .menu-list{padding:0 4px 16px;display:flex;flex-direction:column;gap:8px}
+    .menu-link{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:var(--surface);border-radius:14px;border:1px solid var(--border);font-family:inherit;font-size:.9rem;cursor:pointer;text-align:left;transition:transform .18s ease}
+    .menu-link .menu-ic{width:36px;height:36px;border-radius:12px;background:var(--pastel-slate-bg);color:var(--pastel-slate-on);border:1px solid rgba(90,100,114,.1);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .menu-link[data-goto="menu-profile"] .menu-ic{background:var(--pastel-slate-bg);color:var(--pastel-slate-on);border-color:rgba(90,100,114,.12)}
+    .menu-link[data-goto="marketing"] .menu-ic{background:var(--pastel-teal-bg);color:var(--pastel-teal-on);border-color:rgba(42,107,95,.12)}
+    .menu-link[data-goto="offers"] .menu-ic{background:var(--pastel-violet-bg);color:var(--pastel-violet-on);border-color:rgba(107,79,158,.12)}
+    .menu-link[data-goto="how-it-works"] .menu-ic{background:var(--pastel-amber-bg);color:var(--pastel-amber-on);border-color:rgba(138,106,46,.12)}
+    #btnServiceLink .menu-ic{background:var(--pastel-mint-bg);color:var(--pastel-mint-on);border-color:rgba(47,107,82,.12)}
+    .menu-link[data-goto="privacy"] .menu-ic{background:var(--pastel-blue-bg);color:var(--pastel-blue-on);border-color:rgba(61,95,122,.12)}
+    .menu-link[data-goto="terms"] .menu-ic{background:var(--pastel-slate-bg);color:var(--pastel-slate-on);border-color:rgba(90,100,114,.12)}
+    .menu-link[data-goto="notifications"] .menu-ic{background:var(--pastel-coral-bg);color:var(--pastel-coral-on);border-color:rgba(164,94,74,.12)}
+    .menu-link[data-goto="construction-progress"] .menu-ic{background:var(--pastel-teal-bg);color:var(--pastel-teal-on);border-color:rgba(42,107,95,.12)}
+    .menu-link[data-goto="events"] .menu-ic{background:var(--pastel-amber-bg);color:var(--pastel-amber-on);border-color:rgba(138,106,46,.12)}
+    .menu-link[data-goto="partners"] .menu-ic{background:var(--pastel-mint-bg);color:var(--pastel-mint-on);border-color:rgba(47,107,82,.12)}
+    .menu-link--logout .menu-ic{background:var(--pastel-rose-bg);color:var(--pastel-rose-on);border-color:rgba(180,77,90,.12)}
+    .menu-link .menu-txt{flex:1;font-weight:600;color:var(--text)}
+    .menu-link .menu-chev{color:var(--text-muted);font-size:1.1rem}
+    .menu-link--logout .menu-txt{color:var(--error)}
+    .menu-info{padding:8px 4px 20px;font-size:.86rem;line-height:1.6;color:var(--text)}
+    .menu-info p{margin-bottom:12px}
+    .menu-info h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+    .profile-edit-btn{padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-pill);background:var(--surface-muted);font-family:inherit;font-size:.78rem;font-weight:600;color:var(--text);cursor:pointer}
+    .profile-avatar-card{text-align:center;padding:16px}
+    .profile-avatar-card .avatar{margin-bottom:10px}
+    .profile-action{width:100%;margin-top:10px;padding:11px;border:none;border-radius:var(--radius-pill);background:var(--primary-soft);color:var(--primary-dark);font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer}
+    .prof-info-rows{display:flex;flex-direction:column;gap:14px;padding-top:12px}
+    .prof-info-field{display:flex;flex-direction:column;gap:4px}
+    .prof-info-field .prof-lbl{font-size:.75rem;font-weight:600;color:var(--text-muted)}
+    .prof-info-field .prof-val{font-size:.9rem;font-weight:600;color:var(--text)}
+    .prof-info-field a.prof-val{text-decoration:none}
+    .avatar{width:72px;height:72px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto;position:relative;overflow:hidden}
+    .avatar-letter{line-height:1}
+    .avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+    .avatar.has-photo .avatar-img{display:block}
+    .avatar.has-photo .avatar-letter{display:none}
+    .projects-all-link{display:flex;align-items:center;gap:14px;margin:0 16px 12px;padding:14px 16px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);width:calc(100% - 32px);font-family:inherit;font-size:.92rem;font-weight:600;cursor:pointer;flex-shrink:0;color:var(--text)}
+    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:8px 20px 24px}
+    .project-card-lg{height:118px;border-radius:16px;border:1.5px solid var(--border);overflow:hidden;position:relative;cursor:pointer;width:100%;background:var(--surface-muted);transition:transform .18s ease}
+    .project-card-lg .project-name{font-size:.68rem;padding:8px}
+    .projects-scroll{display:flex;gap:6px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory}
+    .projects-scroll::-webkit-scrollbar{display:none}
+    .project-card{flex:0 0 74px;height:94px;border-radius:11px;border:1.5px solid var(--border);overflow:hidden;position:relative;cursor:pointer;background:var(--surface-muted);transition:transform .18s ease}
+    .project-card .project-visual{position:absolute;inset:0;background-size:cover;background-position:center}
+    .project-card .project-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.35) 40%,rgba(255,255,255,.9) 72%,rgba(255,255,255,.97) 100%)}
+    .project-card .project-name{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:5px 3px 6px;color:var(--text);font-size:.48rem;font-weight:700;text-align:center;line-height:1.15}
+    .project-card-active{border-color:var(--primary);box-shadow:0 0 0 2px rgba(13,148,136,.2)}
+    .screen[data-screen="property"].active{display:flex!important;flex-direction:column;min-height:100%}
+    .screen[data-screen="projects-all"].active,.screen[data-screen="partners"].active,.screen[data-screen="partner-detail"].active{display:flex!important;flex-direction:column;min-height:0;height:100%}
+    .projects-all-body{flex:1;overflow-y:auto;min-height:0;padding-bottom:8px}
+    .partner-discount-badge{position:absolute;top:6px;left:6px;z-index:3;color:#dc2626;font-size:.62rem;font-weight:800;line-height:1.1;pointer-events:none;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.92);box-shadow:0 1px 4px rgba(15,28,42,.12)}
+    .partner-card .project-visual{background-color:#fff;background-size:contain;background-repeat:no-repeat;background-position:center}
+    .partner-card .project-overlay{display:none}
+    .partner-card .project-name,.partner-card .partner-card-offer{display:none}
+    .partner-detail-logo{width:100%;height:120px;border-radius:16px;border:1.5px solid var(--border);margin-bottom:14px;background:#fff;display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box;overflow:hidden}
+    .partner-detail-logo img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}
+    .partner-detail-logo:empty{display:none}
+    .partners-intro{padding:0 16px 10px}
+    .partners-intro-card{background:var(--surface);border-radius:14px;border:1px solid var(--border);margin-bottom:4px;overflow:hidden}
+    .partners-intro-card--qi{padding:0}
+    .partners-qi-banner{display:block;width:100%;height:auto;vertical-align:middle}
+    .partners-qi-desc{font-size:.72rem;font-style:italic;color:var(--text-muted);line-height:1.45;padding:10px 14px 12px;margin:0}
+    .partners-qi-desc a{font-style:normal;font-weight:600;color:var(--primary-dark);text-decoration:none}
+    .partners-qi-desc a:hover{text-decoration:underline}
+    .partners-filter{display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .partners-filter::-webkit-scrollbar{display:none}
+    .partners-filter-btn{flex:0 0 auto;padding:7px 12px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-family:inherit;font-size:.68rem;font-weight:600;color:var(--text-muted);cursor:pointer;white-space:nowrap}
+    .partners-filter-btn.on{background:var(--pastel-mint-bg);color:var(--pastel-mint-on);border-color:rgba(47,107,82,.2)}
+    .screen[data-screen="project-detail"],.screen[data-screen="partner-detail"]{overflow:hidden!important;overflow-y:hidden!important}
+    .screen.active[data-screen="partner-detail"]{display:flex!important;flex-direction:column;overflow:hidden!important;overflow-y:hidden!important;min-height:0}
+    .screen[data-screen="project-detail"] .sub-nav{position:relative;top:auto;flex-shrink:0;z-index:3;background:var(--surface)}
+    .project-detail-shell{flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+    .project-detail-about{flex:1 1 0;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px 16px 6px}
+    .screen[data-screen="project-detail"] .project-about-card{margin-bottom:0}
+    .project-detail-lead{flex-shrink:0;padding:0 16px 22px}
+    .screen[data-screen="project-detail"] .project-lead-card{margin:0;padding:16px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);background:var(--surface)}
+    .screen[data-screen="project-detail"] .project-lead-title{font-size:1rem;font-weight:700;margin:0 0 12px;color:var(--text)}
+    #projectLeadForm.service-form{gap:6px}
+    #projectLeadForm .service-field{gap:4px}
+    #projectLeadForm .service-field label{font-size:.78rem;font-weight:600;color:var(--text-muted)}
+    #projectLeadForm .service-field input,#projectLeadForm .service-field textarea{padding:10px 12px;font-size:.88rem;border-radius:12px}
+    #projectLeadForm .service-field textarea{min-height:40px;max-height:48px;resize:none;line-height:1.35}
+    #projectLeadForm .service-submit{padding:12px;font-size:.9rem;margin-top:0;margin-bottom:0}
+    .property-main{flex:1;overflow-y:auto;min-height:0}
+    .project-about-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:16px;margin-bottom:var(--gap-stack)}
+    .project-about-title{font-size:1rem;font-weight:700;margin:0 0 12px;color:var(--text)}
+    .project-about-body{font-size:.82rem;line-height:1.55;color:var(--text)}
+    .project-about-body p{margin:0 0 10px}
+    .project-about-body p:empty{display:none}
+    .project-about-body ul{margin:0 0 10px;padding-left:18px}
+    .project-about-body li{margin-bottom:4px}
+    .project-about-address{font-size:.82rem;margin:0;color:var(--text);line-height:1.45}
+    .project-about-address strong{font-weight:700}
+    .project-lead-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:16px;margin-top:var(--gap-stack)}
+    .project-lead-title{font-size:1rem;font-weight:700;margin:0 0 14px;color:var(--text)}
+    .project-lead-entry{width:100%;margin:0 0 14px;padding:14px 16px;border:none;border-radius:var(--radius);background:var(--primary);color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:var(--shadow)}
+    .project-lead-entry:active{opacity:.92}
+    .property-sections{display:flex;flex-direction:column;gap:var(--gap-stack)}
+    .phone.projects-detail-mode #propertySections,.phone:has(.screen[data-screen="projects-all"].active) #propertySections,.phone:has(.screen[data-screen="project-detail"].active) #propertySections{display:none!important}
+    .screen.active{z-index:2}.screen{z-index:0}
+    .prop-section{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .prop-section-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border:none;background:var(--surface);font-family:inherit;font-size:.92rem;font-weight:600;text-align:left;cursor:pointer;color:var(--text)}
+    .prop-section-head .prop-chev,.prop-doc-head .prop-chev{flex-shrink:0;font-size:1.15rem;color:var(--text-muted);line-height:1;transition:transform .2s;display:inline-block}
+    .prop-section.open .prop-section-head .prop-chev,.prop-doc-group.open .prop-doc-head .prop-chev{transform:rotate(90deg)}
+    .screen[data-screen="property"] .property-pad{padding:14px 16px 8px;display:flex;flex-direction:column;gap:10px}
+    .property-render{position:relative;width:100%;height:168px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface-muted);flex-shrink:0}
+    .property-render img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+    .property-render-cap{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;background:linear-gradient(180deg,rgba(15,23,42,0) 0%,rgba(15,23,42,.62) 100%);color:#fff;font-size:.84rem;font-weight:700;line-height:1.2;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+    .screen.active[data-screen="construction-progress"]{display:flex!important;flex-direction:column;overflow:hidden!important;min-height:0;padding-bottom:0}
+    .construction-sticky-head{flex-shrink:0;z-index:2;background:linear-gradient(180deg,#C5D1D9 0%,#E2EBF2 100%);padding-bottom:8px;border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(15,23,42,.06)}
+    .construction-scroll-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-padding-bottom:var(--scroll-pad-bottom);padding-bottom:var(--scroll-pad-bottom)}
+    .screen[data-screen="construction-progress"] .construction-render{margin:0 16px 4px;width:calc(100% - 32px)}
+    .screen[data-screen="construction-progress"] .construction-sub-nav{padding-bottom:4px}
+    .screen[data-screen="property"] .property-sections{gap:10px;margin-top:0}
+    .prop-section-body{display:none;padding:0 16px 14px;border-top:1px solid var(--border)}
+    .prop-section.open .prop-section-body{display:block}
+    .prop-rows{display:flex;flex-direction:column;gap:10px;padding-top:12px}
+    .prop-goto-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:12px 0 2px;border:none;border-top:1px solid var(--border);background:transparent;font-family:inherit;font-size:.82rem;font-weight:600;color:var(--primary-dark);cursor:pointer;text-align:left}
+    .prop-goto-row .prop-chev{font-size:1.15rem;color:var(--text-muted)}
+    .prop-row{display:flex;justify-content:space-between;gap:12px;font-size:.82rem}
+    .prop-row span:first-child{color:var(--text-muted)}
+    .prop-row span:last-child{font-weight:600;text-align:right}
+    .prop-doc-groups{display:flex;flex-direction:column;gap:8px;padding-top:10px}
+    .prop-doc-group{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface-muted)}
+    .prop-doc-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border:none;background:transparent;font-family:inherit;font-size:.86rem;font-weight:600;text-align:left;cursor:pointer;color:var(--text)}
+    .prop-doc-files{display:none;flex-direction:column;gap:6px;padding:0 10px 10px}
+    .prop-doc-group.open .prop-doc-files{display:flex}
+    .prop-pdf-link{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:10px;text-decoration:none;color:var(--text);font-size:.8rem;border:1px solid var(--border)}
+    .prop-pdf-link:hover{border-color:var(--primary)}
+    .prop-pdf-icon{width:32px;height:32px;border-radius:8px;background:var(--error);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;flex-shrink:0}
+    .prop-pdf-meta{flex:1;min-width:0}
+    .prop-pdf-meta strong{display:block;font-weight:600;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .prop-pdf-meta span{font-size:.7rem;color:var(--text-muted)}
+    .prop-pdf-dl{flex-shrink:0;font-size:.72rem;font-weight:600;color:var(--primary)}
+    .page-pad{display:flex;flex-direction:column;gap:var(--gap-stack);padding:var(--pad-page-y) var(--pad-page-x) var(--scroll-pad-bottom)}
+    .phone .screen:not(.screen-auth) .sub-nav{background:transparent;border-bottom:none}
+    .phone .screen:not(.screen-auth) .tab-page-head{background:transparent}
+    .phone .screen:not(.screen-auth) .balance,.phone .screen:not(.screen-auth) .feed-card,.phone .screen:not(.screen-auth) .offer-card,.phone .screen:not(.screen-auth) .home-card:not(.projects-card),.phone .screen:not(.screen-auth) .quick-card,.phone .screen:not(.screen-auth) .menu-link,.phone .screen:not(.screen-auth) .service-catalog-item,.phone .screen:not(.screen-auth) .service-req-card,.phone .screen:not(.screen-auth) .comm-event,.phone .screen:not(.screen-auth) .fin-balance-card,.phone .screen:not(.screen-auth) .pay-due-item,.phone .screen:not(.screen-auth) .pay-due-expand,.phone .screen:not(.screen-auth) .fin-property-summary,.phone .screen:not(.screen-auth) .fin-schedule-card,.phone .screen:not(.screen-auth) .prop-section,.phone .screen:not(.screen-auth) .projects-all-link,.phone .screen:not(.screen-auth) .project-about-card,.phone .screen:not(.screen-auth) .project-lead-card,.phone .screen:not(.screen-auth) .access-code-card,.phone .screen:not(.screen-auth) .pay-tabs,.phone .screen:not(.screen-auth) .flow-crosslink{background:var(--panel-bg);border:var(--panel-frame);box-shadow:none}
+    .phone .screen:not(.screen-auth) .comm-event{border:var(--panel-frame)}
+    .phone .screen:not(.screen-auth) .prop-section-head{background:var(--panel-bg)}
+    .phone .screen:not(.screen-auth) .prop-section-body{border-top:1px solid var(--panel-border)}
+    .phone .screen:not(.screen-auth) .quick-card .bubble,.phone .screen:not(.screen-auth) .manager-icon-btn{background:var(--panel-bg);border:1px solid var(--panel-border)}
+    .phone .screen:not(.screen-auth) .comm-event-date{background:var(--pastel-teal-bg);border:1px solid rgba(42,107,95,.14);color:var(--pastel-teal-on)}
+    .phone .screen:not(.screen-auth) .prop-doc-group,.phone .screen:not(.screen-auth) .prop-pdf-link{background:var(--panel-bg);border:var(--panel-frame)}
+    .phone .screen:not(.screen-auth) .service-field input,.phone .screen:not(.screen-auth) .service-field textarea{background:var(--panel-bg);border:var(--panel-frame)}
+    .phone .screen:not(.screen-auth) .datetime-picker-display,.phone .screen:not(.screen-auth) .datetime-picker-trigger,.phone .screen:not(.screen-auth) .datetime-picker-popover{background:var(--panel-bg);border-color:var(--panel-border)}
+    .phone .screen:not(.screen-auth) .dtp-time select{background:var(--panel-bg);border-color:var(--panel-border)}
+    .phone .screen:not(.screen-auth) .home-feed .feed-card .tag{background:var(--panel-bg);color:var(--text);border:var(--panel-frame);box-shadow:none}
+    .phone .screen[data-screen="offers"] .tag-teal,.phone .screen[data-screen="marketing"] .tag-teal,.phone .screen[data-screen="notifications"] .tag-teal,.phone .screen[data-screen="construction-progress"] .tag-teal{background:var(--pastel-teal-bg);color:var(--pastel-teal-on);border:1px solid rgba(42,107,95,.14)}
+    .phone .screen[data-screen="offers"] .tag-violet,.phone .screen[data-screen="marketing"] .tag-violet,.phone .screen[data-screen="notifications"] .tag-violet,.phone .screen[data-screen="construction-progress"] .tag-violet{background:var(--pastel-violet-bg);color:var(--pastel-violet-on);border:1px solid rgba(107,79,158,.14)}
+    .phone .screen:not(.screen-auth) .fin-table-head,.phone .screen:not(.screen-auth) .fin-table-more-btn{background:var(--panel-bg);border-color:var(--panel-border)}
+    .phone .screen:not(.screen-auth) .profile-edit-btn,.phone .screen:not(.screen-auth) .ticket-upload{background:var(--panel-bg);border-color:var(--panel-border)}
+    .phone .screen:not(.screen-auth) .pay-due-expand.overdue{border-color:var(--panel-border)}
+    .phone .screen[data-screen="service"] .pay-tabs,.phone .screen[data-screen="ticketing"] .pay-tabs,.phone .screen[data-screen="payments"] .pay-tabs{background:var(--pearl);border:1.5px solid var(--border);box-shadow:none}
+    .phone .screen[data-screen="home"] .home-card.projects-card{background:linear-gradient(180deg,var(--fade-gray-light) 0%,var(--fade-gray) 52%,var(--fade-gray-deep) 100%);border:1px solid var(--fade-gray-border);box-shadow:none}
+    .screen[data-screen="project-detail"] .sub-nav{background:var(--panel-bg)}
+  </style>
+</head>
+<body>
+  <nav class="screen-nav" id="nav"></nav>
+  <div class="phone">
+    <header class="app-topbar" id="appTopbar">
+      <div class="app-topbar-brand">
+        <div class="brand-wordmark brand-wordmark--header" aria-label="თეთრი კვადრატი">
+          <img class="brand-lockup brand-lockup--header" src="assets/logo-lockup-white.png?v=1" alt="თეთრი კვადრატი" />
+        </div>
+      </div>
+      <div class="app-topbar-actions">
+        <a class="app-topbar-btn app-topbar-btn--mint" id="topbarCallLink" href="tel:+995599123456" aria-label="დარეკვა"><svg viewBox="0 0 24 24" stroke-width="1.75"><path d="M5 4h4l2 5-2 1a11 11 0 0 0 5 5l1-2 5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></a>
+        <button type="button" class="app-topbar-btn" data-goto="notifications" aria-label="შეტყობინებები"><svg viewBox="0 0 24 24" stroke-width="1.75"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+      </div>
+    </header>
+    <div class="screen-content" id="screenContent">
+      <div class="screen screen-auth" data-screen="login">
+        <div class="login-bg-slideshow" id="loginBgSlideshow" aria-hidden="true"></div>
+        <div class="login-bg-overlay" aria-hidden="true"></div>
+        <div class="login-panel">
+          <div class="login-brand-top">
+            <img class="brand-lockup brand-lockup--login" src="assets/logo-lockup-white.png?v=1" alt="თეთრი კვადრატი" />
+          </div>
+          <div class="login-form-wrap">
+            <form class="login-form-card" id="loginForm" autocomplete="on">
+              <div class="login-field">
+                <label for="loginUser">მომხმარებელი</label>
+                <input type="text" id="loginUser" name="username" placeholder="მომხმარებელი" autocomplete="username" />
+              </div>
+              <div class="login-field">
+                <label for="loginPass">პაროლი</label>
+                <input type="password" id="loginPass" name="password" placeholder="პაროლი" autocomplete="current-password" />
+              </div>
+              <button type="submit" class="login-btn" id="btnLogin">შესვლა</button>
+            </form>
+            <div class="login-links">
+              <button type="button" class="login-link" id="btnForgotPass">დაგავიწყდა პაროლი?</button>
+              <button type="button" class="login-link" id="btnRegister">რეგისტრაცია</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen active" data-screen="home">
+        <div class="page-pad home-pad">
+          <div class="home-partners-block">
+            <div class="home-partners-carousel">
+              <button type="button" class="projects-scroll-arrow projects-scroll-arrow--prev" id="homePartnersScrollPrev" aria-label="წინა"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <div class="home-partners-scroll" id="homePartnersStories" aria-label="პარტნიორი კომპანიები"></div>
+              <button type="button" class="projects-scroll-arrow projects-scroll-arrow--next" id="homePartnersScrollNext" aria-label="შემდეგი"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="home-card greet-card">
+            <h1>გამარჯობა, ნინო</h1>
+            <p class="unit-project" id="greetProjectName">Urban East</p>
+            <p class="unit">ბინა 12 · კორპუსი B</p>
+          </div>
+          <div class="home-card manager-card">
+            <div class="manager-row">
+              <div>
+                <span class="manager-lbl">პირადი მენეჯერი</span>
+                <strong class="manager-name">ტასო ანასტასიაძე</strong>
+              </div>
+              <div class="manager-actions">
+                <a class="manager-icon-btn" href="tel:+995599123456" aria-label="დარეკვა"><svg viewBox="0 0 24 24" stroke-width="1.75"><path d="M5 4h4l2 5-2 1a11 11 0 0 0 5 5l1-2 5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></a>
+                <button type="button" class="manager-icon-btn" data-goto="service-new" aria-label="მიწერა"><svg viewBox="0 0 24 24" stroke-width="1.75"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="qi-card-promo" data-goto="partners" aria-label="ქი ქარდი — პარტნიორი კომპანიები"><img src="assets/qi-card-promo.png?v=1" alt="გაქვს ქი ქარდი?" width="358" height="120" /></button>
+          <div class="quick-grid">
+            <button type="button" class="quick-card" data-goto="access"><div class="bubble">🔒</div><span>დაშვება</span></button>
+            <button type="button" class="quick-card" data-goto="ticketing"><div class="bubble">🎫</div><span>თიქეთი</span></button>
+            <button type="button" class="quick-card" data-goto="payments"><div class="bubble">💳</div><span>ბალანსი</span></button>
+          </div>
+          <div class="home-events-block">
+            <h2 class="home-section-title">ღონისძიებები</h2>
+            <div class="home-events-list">
+              <button type="button" class="comm-event" data-goto="events"><span class="comm-event-date"><strong>22</strong><span>ივნ</span></span><span class="comm-event-body"><h4>საზაფხულო ფესტივალი</h4><p>12:00–16:00 · ეზო და ტერასა</p></span></button>
+              <button type="button" class="comm-event" data-goto="events"><span class="comm-event-date"><strong>14</strong><span>ივნ</span></span><span class="comm-event-body"><h4>მეზობელთა შეხვედრა</h4><p>18:00 · საერთო სივრცე, 1 სართული</p></span></button>
+              <button type="button" class="comm-event" data-goto="news-detail"><span class="comm-event-date"><strong>7</strong><span>ივნ</span></span><span class="comm-event-body"><h4>ეზოს დასუფთავება</h4><p>შაბათი 11:00 · ერთობლივი სამუშაო</p></span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="menu">
+        <div class="tab-page-head"><h2>მენიუ</h2></div>
+        <div class="page-pad" style="padding-top:0">
+        <div class="menu-list">
+            <button type="button" class="menu-link" data-goto="menu-profile"><span class="menu-ic">👤</span><span class="menu-txt">პროფილი</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="notifications"><span class="menu-ic">🔔</span><span class="menu-txt">შეტყობინებები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="construction-progress"><span class="menu-ic">🏗️</span><span class="menu-txt">მშენებლობის პროგრესი</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="partners"><span class="menu-ic">🤝</span><span class="menu-txt">პარტნიორი კომპანიები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="offers"><span class="menu-ic">🎁</span><span class="menu-txt">შეთავაზებები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="how-it-works"><span class="menu-ic">❓</span><span class="menu-txt">როგორ მუშაობს?</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" id="btnServiceLink"><span class="menu-ic">🔗</span><span class="menu-txt">სერვისის ლინკი</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="privacy"><span class="menu-ic">🔒</span><span class="menu-txt">კონფიდენციალურობა</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="terms"><span class="menu-ic">📄</span><span class="menu-txt">წესები და პირობები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link menu-link--logout" id="btnMenuLogout"><span class="menu-ic">🚪</span><span class="menu-txt">გამოსვლა</span><span class="menu-chev">›</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="menu-profile">
+        <div class="tab-page-head"><h2>პროფილი</h2></div>
+        <div class="page-pad">
+          <div class="home-card profile-avatar-card">
+            <div class="avatar" id="profileAvatar"><span class="avatar-letter" id="profileAvatarLetter">ნ</span><img class="avatar-img" id="profileAvatarImg" alt="" /></div>
+            <input type="file" id="profilePhotoInput" accept="image/*" hidden />
+            <button type="button" class="profile-edit-btn" id="btnChangePhoto">ფოტოს შეცვლა</button>
+          </div>
+          <div class="property-sections" id="profileSections">
+            <div class="prop-section open" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="true">პირადი ინფორმაცია<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prof-info-rows">
+                  <div class="prof-info-field">
+                    <span class="prof-lbl">სახელი გვარი</span>
+                    <span class="prof-val">ნინო ბერიძე</span>
+                  </div>
+                  <div class="prof-info-field">
+                    <span class="prof-lbl">პირადი ნომერი</span>
+                    <span class="prof-val">01001012345</span>
+                  </div>
+                  <div class="prof-info-field">
+                    <span class="prof-lbl">დაბადების თარიღი</span>
+                    <span class="prof-val">15 მარ 1992</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="prop-section open" data-prop-section id="profileContactCard">
+              <button type="button" class="prop-section-head" aria-expanded="true">საკონტაქტო ინფორმაცია<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prof-info-rows">
+                  <div class="prof-info-field">
+                    <span class="prof-lbl">ტელეფონი</span>
+                    <a class="prof-val" id="profFieldPhone" href="tel:+995599123456">+995 599 12 34 56</a>
+                  </div>
+                  <div class="prof-info-field">
+                    <span class="prof-lbl">ელფოსტა</span>
+                    <a class="prof-val" href="mailto:nino@email.com">nino@email.com</a>
+                  </div>
+                  <div class="prof-info-field">
+                    <span class="prof-lbl">მისამართი</span>
+                    <span class="prof-val" id="profFieldAddress">ვ.დოლიძის №2, სართ.7,  ბ #1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="offers">
+        <div class="sub-nav"><button type="button" data-goto="marketing">←</button><h2>შეთავაზებები</h2></div>
+        <div class="offers-feed" id="offersFeed"></div>
+      </div>
+      <div class="screen" data-screen="how-it-works"><div class="sub-nav"><button type="button" data-goto="menu">←</button><h2>როგორ მუშაობს?</h2></div><div class="page-pad menu-info"><h3>Community APP</h3><p>აპლიკაცია გაძლევთ საშუალებას, მართოთ თქვენი უძრავი ქონება, გადაიხადოთ გადასახადები, მოითხოვოთ სერვისი და იყოთ Community-ის ნაწილი.</p></div></div>
+      <div class="screen" data-screen="privacy"><div class="sub-nav"><button type="button" data-goto="menu">←</button><h2>კონფიდენციალურობა</h2></div><div class="page-pad menu-info"><p>პირადი მონაცემების დაცვის პოლიტიკა.</p></div></div>
+      <div class="screen" data-screen="terms"><div class="sub-nav"><button type="button" data-goto="menu">←</button><h2>წესები და პირობები</h2></div><div class="page-pad menu-info"><p>აპლიკაციის გამოყენების წესები და პირობები.</p></div></div>
+      <div class="screen" data-screen="property">
+        <div class="property-main">
+        <div class="page-pad property-pad">
+          <div class="property-render" id="propertyRender"><img id="propertyRenderImg" src="https://w2.ge/storage/11917/conversions/12@2x-m.jpg?v=1776253975" alt="Urban East" /><span class="property-render-cap" id="propertyRenderCap">Urban East</span></div>
+            <div class="property-sections" id="propertySections">
+            <div class="prop-section" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="false">ჩემი უძრავი ქონება<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prop-rows">
+                  <div class="prop-row"><span>პროექტი</span><span id="propFieldProject">Urban East</span></div>
+                  <div class="prop-row"><span>კორპუსი</span><span id="propFieldBlock">B</span></div>
+                  <div class="prop-row"><span>სართული</span><span id="propFieldFloor">8</span></div>
+                  <div class="prop-row"><span>№</span><span id="propFieldNo">12</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="prop-section" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="false">დეტალები<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prop-rows">
+                  <div class="prop-row"><span>ოთახების რაოდ.</span><span id="propFieldRooms">3</span></div>
+                  <div class="prop-row"><span>ჯამური კვ.მ.</span><span id="propFieldTotalSqm">98.4</span></div>
+                  <div class="prop-row"><span>შიდა ფართი კვ.მ.</span><span id="propFieldInternalSqm">82.1</span></div>
+                  <div class="prop-row"><span>აივანი კვ.მ.</span><span id="propFieldBalconySqm">12.3</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="prop-section" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="false">ნახაზები<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prop-doc-groups">
+                  <div class="prop-doc-group" data-prop-doc-group>
+                    <button type="button" class="prop-doc-head" aria-expanded="false">რენდერი<span class="prop-chev" aria-hidden="true">›</span></button>
+                    <div class="prop-doc-files">
+                      <a class="prop-pdf-link" href="assets/drawings/render-exterior.pdf" download="render-exterior.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>გარე ხედი.pdf</strong><span>1.2 MB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                      <a class="prop-pdf-link" href="assets/drawings/render-interior.pdf" download="render-interior.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>შიდა ხედი.pdf</strong><span>980 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                    </div>
+                  </div>
+                  <div class="prop-doc-group" data-prop-doc-group>
+                    <button type="button" class="prop-doc-head" aria-expanded="false">სართ.გეგმა<span class="prop-chev" aria-hidden="true">›</span></button>
+                    <div class="prop-doc-files">
+                      <a class="prop-pdf-link" href="assets/drawings/floorplan-level.pdf" download="floorplan-level.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>სართულის გეგმა.pdf</strong><span>540 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                      <a class="prop-pdf-link" href="assets/drawings/floorplan-3d.pdf" download="floorplan-3d.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>3D გეგმა.pdf</strong><span>720 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="prop-section" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="false">ხელმოწერილი დოკუმენტები<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prop-doc-groups">
+                  <div class="prop-doc-group" data-prop-doc-group>
+                    <button type="button" class="prop-doc-head" aria-expanded="false">ხელშეკრულება<span class="prop-chev" aria-hidden="true">›</span></button>
+                    <div class="prop-doc-files">
+                      <a class="prop-pdf-link" href="assets/documents/xelshekruleba.pdf" download="xelshekruleba.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>ხელშეკრულება.pdf</strong><span>245 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                      <a class="prop-pdf-link" href="assets/documents/xelshekruleba-shenatani.pdf" download="xelshekruleba-shenatani.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>დანართი — პირობები.pdf</strong><span>128 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                    </div>
+                  </div>
+                  <div class="prop-doc-group" data-prop-doc-group>
+                    <button type="button" class="prop-doc-head" aria-expanded="false">დამატებითი დოკუმენტები<span class="prop-chev" aria-hidden="true">›</span></button>
+                    <div class="prop-doc-files">
+                      <a class="prop-pdf-link" href="assets/documents/gadaxdis-grafiki.pdf" download="gadaxdis-grafiki.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>გადახდის გრაფიკი.pdf</strong><span>96 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                      <a class="prop-pdf-link" href="assets/documents/mimgebi-aktis-nusxa.pdf" download="mimgebi-aktis-nusxa.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>მიღება-ჩაბარების აქტი.pdf</strong><span>112 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="prop-section" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="false">დასადასტურებელი დოკუმენტები<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prop-doc-groups">
+                  <a class="prop-pdf-link" href="assets/documents/xelshekruleba.pdf" download="dasadasturebeli-xelshekruleba.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>ხელშეკრულება.pdf</strong><span>312 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                  <a class="prop-pdf-link" href="assets/documents/mimgebi-aktis-nusxa.pdf" download="dasadasturebeli-mimgebi-aktis-nusxa.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>მიღება-ჩაბარების აქტი.pdf</strong><span>186 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                  <a class="prop-pdf-link" href="assets/documents/gadaxdis-grafiki.pdf" download="dasadasturebeli-ganazomva.pdf"><span class="prop-pdf-icon">PDF</span><span class="prop-pdf-meta"><strong>განაცხადი.pdf</strong><span>94 KB</span></span><span class="prop-pdf-dl">ჩამოტვირთვა</span></a>
+                </div>
+              </div>
+            </div>
+            <div class="prop-section" data-prop-section>
+              <button type="button" class="prop-section-head" aria-expanded="false">მშენებლობის პროგრესი<span class="prop-chev" aria-hidden="true">›</span></button>
+              <div class="prop-section-body">
+                <div class="prop-rows">
+                  <div class="prop-row"><span>მშენებლობის სტატუსი</span><span id="propFieldStatus">მიმდინარე</span></div>
+                  <div class="prop-row"><span>დასრულების ვადა</span><span id="propFieldDeadline">31 დეკ 2028</span></div>
+                </div>
+                <button type="button" class="prop-goto-row" data-goto="construction-progress">განახლებების სია<span class="prop-chev" aria-hidden="true">›</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="access">
+        <div class="access-shell">
+          <div class="access-body">
+            <div class="access-wrap">
+              <h2 class="access-page-title">დაშვება</h2>
+              <div class="access-main">
+              <p class="access-title">ერთჯერადი დაშვების კოდი</p>
+              <div class="access-code-card">
+                <div class="access-code-frame">
+                  <div class="access-code" id="accessCodeValue">614348</div>
+                </div>
+              </div>
+              <div class="access-actions">
+                <div class="access-action">
+                  <button type="button" class="access-action-btn" id="btnAccessRefresh" aria-label="განახლება">
+                    <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+                  </button>
+                  <span class="access-action-lbl">განახლება</span>
+                </div>
+                <div class="access-action">
+                  <button type="button" class="access-action-btn" id="btnAccessShare" aria-label="გაზიარება">
+                    <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 12 8-6"/><path d="m8 12 8 6"/></svg>
+                  </button>
+                  <span class="access-action-lbl">გაზიარება</span>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="service">
+        <div class="service-sticky-head" id="serviceStickyHead">
+          <div class="tab-page-head"><h2>სერვისი</h2></div>
+          <p class="tab-page-hint">აირჩიეთ სერვისი სიიდან და დააფიქსირეთ ვიზიტის დრო.</p>
+          <div class="service-sticky-tabs">
+            <div class="pay-tabs">
+              <button type="button" class="pay-tab on" data-service-tab="catalog">სერვისის არჩევა</button>
+              <button type="button" class="pay-tab" data-service-tab="requests">ჩემი მოთხოვნები</button>
+            </div>
+          </div>
+        </div>
+        <div class="page-pad service-body">
+          <div class="service-panel active" data-service-panel="catalog">
+            <div class="service-catalog">
+              <button type="button" class="service-catalog-item" data-service-type="დიასახლისის მომსახურება">დიასახლისის მომსახურება<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="მეეზოვის მომსახურება">მეეზოვის მომსახურება<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="ტექნიკოსის მომსახურება">ტექნიკოსის მომსახურება<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="ლიფტის მომსახურება">ლიფტის მომსახურება<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="გამწვანების მოვლა">გამწვანების მოვლა<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="აუზის მოვლა">აუზის მოვლა<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="დეზინფექციისა და შეწამლვის სერვისი">დეზინფექციისა და შეწამლვის სერვისი<span class="service-chev">›</span></button>
+              <button type="button" class="service-catalog-item" data-service-type="უსაფრთხოების კამერების მონტაჟი">უსაფრთხოების კამერების მონტაჟი<span class="service-chev">›</span></button>
+            </div>
+            <button type="button" class="flow-crosslink" data-goto="ticketing">სხვა პრობლემა? გახსენით თიქეთი →</button>
+          </div>
+          <div class="service-panel" data-service-panel="requests">
+            <div class="service-requests" id="serviceRequestsList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="ticketing">
+        <div class="service-sticky-head" id="ticketStickyHead">
+          <div class="tab-page-head"><h2>თიქეთინგი</h2></div>
+          <p class="tab-page-hint">შექმენით თიქეთი — მიუთითეთ საგანი, აღწერეთ პრობლემა და მიუერთეთ ფოტო ან ვიდეო.</p>
+          <div class="service-sticky-tabs">
+            <div class="pay-tabs">
+              <button type="button" class="pay-tab on" data-ticket-tab="new">თიქეთის გახსნა</button>
+              <button type="button" class="pay-tab" data-ticket-tab="list">ჩემი თიქეთები</button>
+            </div>
+          </div>
+        </div>
+        <div class="page-pad service-body">
+          <div class="ticket-panel active" data-ticket-panel="new">
+            <form class="service-form" id="ticketNewForm">
+              <div class="service-field">
+                <label for="ticketSummary">საგანი</label>
+                <input type="text" id="ticketSummary" placeholder="მაგ. რთული გაჟონვა სადარბაზოში" required />
+              </div>
+              <div class="service-field">
+                <label>ფოტო/ვიდეო ატვირთვა</label>
+                <label class="ticket-upload" id="ticketUploadLabel">
+                  <input type="file" id="ticketUpload" accept="image/*,video/*" multiple />
+                  📷 აირჩიეთ ფაილი
+                </label>
+                <p class="ticket-files-hint" id="ticketFilesHint" hidden></p>
+              </div>
+              <div class="service-field">
+                <label for="ticketDescription">პრობლემის მოკლე აღწერა</label>
+                <textarea id="ticketDescription" placeholder="რა მოხდა, სად, როდის…"></textarea>
+              </div>
+              <button type="submit" class="service-submit">თიქეთის გაგზავნა</button>
+            </form>
+            <button type="button" class="flow-crosslink" data-goto="service">სერვისი →</button>
+          </div>
+          <div class="ticket-panel" data-ticket-panel="list">
+            <div class="service-requests" id="ticketList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="service-new">
+        <div class="sub-nav"><button type="button" data-goto="service">←</button><h2 id="serviceNewTitle">მოთხოვნა</h2></div>
+        <div class="page-pad">
+          <p class="tab-page-hint" style="padding:0 0 12px">დააფიქსირეთ სავარაუდო ვიზიტის დრო.</p>
+          <form class="service-form" id="serviceRequestForm">
+            <div class="service-field">
+              <label for="serviceReqDatetimeDisplay">სავარაუდო თარიღი/დრო</label>
+              <div class="datetime-picker" id="serviceReqDatetimePicker">
+                <div class="datetime-picker-control">
+                  <input type="text" class="datetime-picker-display" id="serviceReqDatetimeDisplay" placeholder="აირჩიეთ თარიღი და დრო" readonly autocomplete="off" required />
+                  <button type="button" class="datetime-picker-trigger" id="serviceReqDatetimeTrigger" aria-label="კალენდარი" aria-expanded="false" aria-controls="serviceReqDatetimePopover"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></button>
+                </div>
+                <input type="hidden" id="serviceReqDatetime" />
+                <div class="datetime-picker-popover" id="serviceReqDatetimePopover" role="dialog" aria-label="თარიღისა და დროის არჩევა" hidden>
+                  <div class="dtp-head">
+                    <button type="button" class="dtp-prev" aria-label="წინა თვე">‹</button>
+                    <span class="dtp-head-title" id="serviceReqDtpMonthLabel"></span>
+                    <button type="button" class="dtp-next" aria-label="შემდეგი თვე">›</button>
+                  </div>
+                  <div class="dtp-weekdays"><span>ორშ</span><span>სამ</span><span>ოთხ</span><span>ხუთ</span><span>პარ</span><span>შაბ</span><span>კვი</span></div>
+                  <div class="dtp-days" id="serviceReqDtpDays"></div>
+                  <div class="dtp-time">
+                    <label for="serviceReqDtpHour">საათი</label>
+                    <select id="serviceReqDtpHour"></select>
+                    <label for="serviceReqDtpMinute">წთ</label>
+                    <select id="serviceReqDtpMinute"></select>
+                  </div>
+                  <button type="button" class="dtp-apply" id="serviceReqDtpApply">დადასტურება</button>
+                </div>
+              </div>
+            </div>
+            <div class="service-field">
+              <label for="serviceReqComment">კომენტარი</label>
+              <textarea id="serviceReqComment" placeholder="დამატებითი ინფორმაცია"></textarea>
+            </div>
+            <button type="submit" class="service-submit">მოთხოვნის გაგზავნა</button>
+          </form>
+        </div>
+      </div>
+      <div class="screen" data-screen="payments">
+        <div class="tab-page-head"><h2>ფინანსები</h2></div>
+        <div class="page-pad">
+          <div class="fin-property-summary fin-pay-head-block" id="finServiceHeadSummary">
+            <div class="fin-install-head"><span class="fin-install-lbl">მომსახურების ღირებულება</span><span class="fin-install-val" id="finServiceValue">37 ₾ / თვე</span></div>
+            <div class="fin-install-summary">
+              <div class="fin-install-row"><span class="fin-install-lbl">ჯამში დარიცხვა</span><span class="fin-install-val fin-install-accrued" id="finServiceAccrued">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">გადახდილი</span><span class="fin-install-val fin-install-paid" id="finServicePaid">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">დარჩენილი</span><span class="fin-install-val fin-install-remain" id="finServiceRemain">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">შემდეგი გადახდის თარიღი</span><span class="fin-install-val" id="finServiceNextDate">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">შემდეგი გადახდის თანხა</span><span class="fin-install-val fin-install-next" id="finServiceNextAmount">—</span></div>
+            </div>
+          </div>
+          <div class="fin-property-summary fin-pay-head-block" id="finPropertyHeadSummary" hidden>
+            <div class="fin-install-head"><span class="fin-install-lbl">ქონების ღირებულება</span><span class="fin-install-val" id="finPropertyValue">55 700 აშშ დოლარი</span></div>
+            <div class="fin-install-summary">
+              <div class="fin-install-row"><span class="fin-install-lbl">გადახდილი</span><span class="fin-install-val fin-install-paid" id="finPropertyPaid">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">დარჩენილი</span><span class="fin-install-val fin-install-remain" id="finPropertyRemain">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">შემდეგი გადახდის თარიღი</span><span class="fin-install-val" id="finPropertyNextDate">—</span></div>
+              <div class="fin-install-row"><span class="fin-install-lbl">შემდეგი გადახდის თანხა</span><span class="fin-install-val fin-install-next" id="finPropertyNextAmount">—</span></div>
+            </div>
+          </div>
+          <div class="pay-tabs"><button type="button" class="pay-tab on" data-pay-tab="service">მომსახურება</button><button type="button" class="pay-tab" data-pay-tab="property">ქონება</button></div>
+          <div class="pay-panel active" data-pay-panel="service">
+            <div class="pay-due-list">
+              <div class="pay-due-expand overdue" id="payDueLift">
+                <button type="button" class="pay-due-item" id="btnPayDueLift" aria-expanded="false">
+                  <span class="pay-due-body"><strong>ლიფტი</strong><span class="pay-due-amt" id="finLiftDueAmt">36 ₾</span></span>
+                  <svg class="pay-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="pay-due-detail">
+                  <div class="fin-schedule-card">
+                    <div class="fin-table-head"><span>თარიღი</span><span>დარიცხვა</span><span>გადახდა</span><span>ნაშთი</span></div>
+                    <div id="finLiftTableBody"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="pay-due-expand" id="payDueGuard">
+                <button type="button" class="pay-due-item" id="btnPayDueGuard" aria-expanded="false">
+                  <span class="pay-due-body"><strong>დაცვა</strong><span class="pay-due-amt" id="finGuardDueAmt">100 ₾</span></span>
+                  <svg class="pay-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="pay-due-detail">
+                  <div class="fin-schedule-card">
+                    <div class="fin-table-head"><span>თარიღი</span><span>დარიცხვა</span><span>გადახდა</span><span>ნაშთი</span></div>
+                    <div id="finGuardTableBody"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="pay-due-expand" id="payDueCleaning">
+                <button type="button" class="pay-due-item" id="btnPayDueCleaning" aria-expanded="false">
+                  <span class="pay-due-body"><strong>დასუფთავება</strong><span class="pay-due-amt" id="finCleaningDueAmt">25 ₾</span></span>
+                  <svg class="pay-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="pay-due-detail">
+                  <div class="fin-schedule-card">
+                    <div class="fin-table-head"><span>თარიღი</span><span>დარიცხვა</span><span>გადახდა</span><span>ნაშთი</span></div>
+                    <div id="finCleaningTableBody"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pay-panel" data-pay-panel="property">
+            <div class="pay-due-list">
+              <div class="pay-due-expand" id="payDuePropertySchedule">
+                <button type="button" class="pay-due-item" id="btnPayDuePropertySchedule" aria-expanded="false">
+                  <span class="pay-due-body"><strong>გადახდის გრაფიკი</strong><span class="pay-due-amt" id="finPropertyScheduleAmt">—</span></span>
+                  <svg class="pay-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="pay-due-detail">
+                  <div class="fin-schedule-card">
+                    <div class="fin-table-head"><span>თარიღი</span><span>განვადება</span><span>გადახდა</span><span>ნაშთი</span></div>
+                    <div id="finPropertyTableBody"></div>
+                    <button type="button" class="fin-table-more-btn" id="finTableMoreBtn" hidden>მეტი</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="marketing">
+        <div class="tab-page-head"><h2>Community</h2></div>
+        <div class="page-pad" style="padding-top:0">
+          <div class="menu-list">
+            <button type="button" class="menu-link" data-goto="notifications"><span class="menu-ic">🔔</span><span class="menu-txt">შეტყობინებები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="offers"><span class="menu-ic">🎁</span><span class="menu-txt">შეთავაზებები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="events"><span class="menu-ic">📅</span><span class="menu-txt">ღონისძიებები</span><span class="menu-chev">›</span></button>
+            <button type="button" class="menu-link" data-goto="partners"><span class="menu-ic">🤝</span><span class="menu-txt">პარტნიორი კომპანიები</span><span class="menu-chev">›</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="events">
+        <div class="sub-nav"><button type="button" data-goto="marketing">←</button><h2>ღონისძიებები</h2></div>
+        <div class="page-pad" style="gap:10px">
+          <button type="button" class="qi-card-promo" data-goto="partners" aria-label="ქი ქარდი — პარტნიორი კომპანიები"><img src="assets/qi-card-promo.png?v=1" alt="გაქვს ქი ქარდი?" width="358" height="120" /></button>
+          <h2 class="home-section-title" style="margin-top:0">ღონისძიებები</h2>
+          <button type="button" class="comm-event"><span class="comm-event-date"><strong>22</strong><span>ივნ</span></span><span class="comm-event-body"><h4>საზაფხულო ფესტივალი</h4><p>12:00–16:00 · ეზო და ტერასა</p></span></button>
+          <button type="button" class="comm-event"><span class="comm-event-date"><strong>14</strong><span>ივნ</span></span><span class="comm-event-body"><h4>მეზობელთა შეხვედრა</h4><p>18:00 · საერთო სივრცე, 1 სართული</p></span></button>
+          <button type="button" class="comm-event" data-goto="news-detail"><span class="comm-event-date"><strong>7</strong><span>ივნ</span></span><span class="comm-event-body"><h4>ეზოს დასუფთავება</h4><p>შაბათი 11:00 · ერთობლივი სამუშაო</p></span></button>
+        </div>
+      </div>
+      <div class="screen" data-screen="partners">
+        <div class="sub-nav"><button type="button" id="partnersBack" data-goto="marketing">←</button><h2>პარტნიორი კომპანიები</h2></div>
+        <div class="partners-intro">
+          <div class="partners-intro-card partners-intro-card--qi">
+            <img class="partners-qi-banner" src="assets/qi-card-promo.png?v=1" alt="გაქვს ქი ქარდი?" width="358" height="120" />
+            <p class="partners-qi-desc">ქი ქარდი — „თეთრი კვადრატის“ მობინადრეების ბარათი ექსკლუზიური ფასდაკლებებით პარტნიორ კომპანიებში. <a href="https://w2.ge/card" target="_blank" rel="noopener noreferrer">w2.ge/card</a></p>
+          </div>
+        </div>
+        <div class="partners-filter" id="partnersFilter"></div>
+        <div class="projects-all-body">
+          <div class="projects-grid" id="partnersGridAll"></div>
+        </div>
+      </div>
+      <div class="screen" data-screen="partner-detail">
+        <div class="sub-nav"><button type="button" id="partnerDetailBack">←</button><h2 id="partnerDetailTitle">პარტნიორი</h2></div>
+        <div class="projects-all-body">
+          <div class="page-pad" style="padding-top:8px">
+            <div class="partner-detail-logo" id="partnerDetailLogo" aria-hidden="true"></div>
+            <div class="project-about-card">
+              <h3 class="project-about-title">შეთავაზება</h3>
+              <p id="partnerOfferLine" style="font-size:.9rem;font-weight:700;margin:0 0 12px;color:var(--text)"></p>
+              <div class="project-about-body" id="partnerAboutBody"></div>
+              <p class="project-about-address"><strong>ვადა:</strong> <span id="partnerValidUntil"></span></p>
+              <p class="project-about-address" style="margin-top:8px"><strong>ლოკაცია:</strong> <span id="partnerLocation"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="projects-all">
+        <div class="sub-nav"><button type="button" data-goto="property">←</button><h2>პროექტები</h2></div>
+        <div class="projects-all-body">
+          <div class="projects-grid" id="projectsGridAll"></div>
+        </div>
+      </div>
+      <div class="screen" data-screen="project-detail">
+        <div class="sub-nav"><button type="button" id="projectDetailBack">←</button><h2 id="projectDetailTitle">პროექტი</h2></div>
+        <div class="project-detail-shell">
+          <div class="project-detail-about">
+            <div class="project-about-card">
+              <h3 class="project-about-title">პროექტის შესახებ</h3>
+              <div class="project-about-body" id="projectsProjectAbout"></div>
+              <p class="project-about-address"><strong>მისამართი:</strong> <span id="projectsProjectAddress"></span></p>
+            </div>
+          </div>
+          <div class="project-detail-lead">
+            <div class="project-lead-card">
+              <p class="project-lead-title">მსურს შეძენა</p>
+              <form class="service-form" id="projectLeadForm">
+                <input type="hidden" id="projectLeadProjectId" value="" />
+                <div class="service-field">
+                  <label for="projectLeadPhone">ტელეფონი</label>
+                  <input type="tel" id="projectLeadPhone" required autocomplete="tel" />
+                </div>
+                <div class="service-field">
+                  <label for="projectLeadComment">კომენტარი</label>
+                  <textarea id="projectLeadComment" placeholder="დამატებითი ინფორმაცია" rows="2"></textarea>
+                </div>
+                <button type="submit" class="service-submit">გაგზავნა</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen" data-screen="notifications">
+        <div class="sub-nav"><button type="button" data-goto="marketing">←</button><h2>შეტყობინებები</h2></div>
+        <div class="page-pad home-feed">
+          <button type="button" class="feed-card" data-goto="news-detail"><span class="tag tag-teal">განცხადება</span><h4>ლიფტის გეგმიური შემოწმება</h4><p>შაბათი 10:00–14:00 · დროებით შეზღუდული მოძრაობა</p></button>
+          <button type="button" class="feed-card" data-goto="events"><span class="tag tag-violet">ღონისძიება</span><h4>საზაფხულო ფესტივალი</h4><p>22 ივნ · 12:00–16:00 · ეზო და ტერასა</p></button>
+          <button type="button" class="feed-card" data-goto="payments"><span class="tag tag-teal">გადახდა</span><h4>მომსახურების გადასახადი</h4><p>ივნისი · ლიფტი 36 ₾ · ვადა 25 ივნ</p></button>
+          <button type="button" class="feed-card" data-goto="ticketing"><span class="tag tag-violet">თიქეთი</span><h4>თიქეთის სტატუსი განახლდა</h4><p>რთული გაჟონვა · სტატუსი: დამუშავებაში</p></button>
+        </div>
+      </div>
+      <div class="screen" data-screen="construction-progress">
+        <div class="construction-sticky-head" id="constructionStickyHead">
+          <div class="sub-nav construction-sub-nav"><button type="button" id="constructionBack" data-goto="property">←</button><h2>მშენებლობის პროგრესი</h2></div>
+          <div class="property-render construction-render" id="constructionRender"><img id="constructionRenderImg" src="https://w2.ge/storage/11917/conversions/12@2x-m.jpg?v=1776253975" alt="Urban East" /><span class="property-render-cap" id="constructionRenderCap">Urban East</span></div>
+          <p class="tab-page-hint" id="constructionProgressHint">ბოლოს დასრულებული სამუშაოები პროექტზე — ქრონოლოგიურად.</p>
+        </div>
+        <div class="construction-scroll-body page-pad home-feed" id="constructionProgressFeed"></div>
+      </div>
+      <div class="screen" data-screen="news-detail"><div class="sub-nav"><button data-goto="home">←</button><h2>შეტყობინება</h2></div><div class="page-pad"><span class="tag tag-teal">განცხადება</span><h3 style="margin:12px 0">ლიფტის გეგმიური შემოწმება</h3></div></div>
+      <div class="screen" data-screen="settings"><div class="sub-nav"><button data-goto="menu-profile">←</button><h2>პარამეტრები</h2></div><div class="menu-list"><button class="menu-link">Push შეტყობინებები</button></div></div>
+    </div>
+    <style>
+      .tabs{position:relative;flex-shrink:0;width:100%;background:var(--chrome-dark);border-radius:28px 28px 0 0;display:flex;align-items:flex-end;justify-content:center;padding:12px 6px 10px;z-index:20;box-sizing:border-box;margin-top:auto}
+      .tabs-side{display:flex;flex:1;justify-content:space-around;align-items:flex-end;padding-bottom:2px}
+      .tab{display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;font-family:inherit;font-size:.48rem;color:var(--chrome-on-dark-muted);cursor:pointer;flex:1;max-width:58px;padding:2px 1px;transition:color .2s}
+      .tab .ic{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--mint-light);color:var(--mint-on);transition:background .2s,color .2s,box-shadow .2s,transform .18s ease}
+      .tab .tab-icon{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+      .tab .ic-finances .tab-gel-sym{display:block;font-family:var(--font-brand);font-size:1.18rem;font-weight:800;line-height:1;letter-spacing:-0.04em;-webkit-font-smoothing:antialiased}
+      .tab.on .ic-finances .tab-gel-sym{text-shadow:0 1px 0 rgba(255,255,255,.25)}
+      .tab.on{color:var(--chrome-on-dark);font-weight:600}
+      .tab.on .ic{background:var(--mint);color:var(--mint-on);box-shadow:0 2px 10px rgba(42,92,82,.18)}
+    </style>
+      <nav class="tabs" id="tabBar">
+        <div class="tabs-side tabs-left">
+        <button class="tab on" data-tab="profile"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>მთავარი</button>
+        <button class="tab" data-tab="property"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-5h6v5"/></svg></span>ქონება</button>
+        <button class="tab" data-tab="service"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>სერვისი</button>
+        </div>
+        <div class="tabs-side tabs-right">
+        <button class="tab" data-tab="finances"><span class="ic ic-finances" aria-hidden="true"><span class="tab-gel-sym">₾</span></span>ფინანსები</button>
+        <button class="tab" data-tab="community"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Community</button>
+        <button class="tab" data-tab="menu"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h14"/></svg></span>მენიუ</button>
+        </div>
+      </nav>
+  </div>
+  <script>
+    const AUTH_KEY='samezoblo_session',PROJECT_KEY='samezoblo_project',PHOTO_KEY='samezoblo_profile_photo',SERVICE_REQUESTS_KEY='samezoblo_service_requests',TICKETS_KEY='samezoblo_tickets',LEADS_KEY='samezoblo_project_leads';
+    const SERVICE_STATUS={new:'ახალი',processing:'დამუშავებაში',ordered:'შეკვეთა გაფორმებულია',done:'დასრულებული'};
+    const SERVICE_STATUS_CLASS={new:'service-req-status--new',processing:'service-req-status--processing',ordered:'service-req-status--ordered',done:'service-req-status--done'};
+    const TICKET_STATUS={new:'ახალი',processing:'დამუშავებაში',resolved:'მოგვარებული'};
+    const TICKET_STATUS_CLASS={new:'service-req-status--new',processing:'service-req-status--processing',resolved:'service-req-status--done'};
+    const SERVICE_STATUS_ORDER=['new','processing','ordered','done'];
+    const FIN_MONTHS=['','იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
+    const SERVICE_REQUEST_SEEDS=[
+      {id:'seed-1',service:'მეეზოვის მომსახურება',datetime:'2026-06-02T14:52',comment:'',statusKey:'new',createdAt:'2026-06-02T01:53:00.000Z'},
+      {id:'seed-2',service:'დიასახლისის მომსახურება',datetime:'2026-06-02T16:30',comment:'მერი კომენტარი',statusKey:'done',createdAt:'2026-06-02T01:52:00.000Z'},
+      {id:'seed-3',service:'ლიფტის მომსახურება',datetime:'2026-06-05T10:00',comment:'',statusKey:'ordered',createdAt:'2026-06-01T12:00:00.000Z'},
+      {id:'seed-4',service:'ტექნიკოსის მომსახურება',datetime:'2026-06-10T11:00',comment:'',statusKey:'done',createdAt:'2026-05-28T09:00:00.000Z'}
+    ];
+    const TICKET_SEEDS=[
+      {id:'ticket-seed-1',subject:'რთული გაჟონვა სადარბაზოში',description:'3-ე სართულზე ჭედში',comment:'',fileCount:2,statusKey:'new',createdAt:'2026-06-01T09:30:00.000Z'},
+      {id:'ticket-seed-2',subject:'შუქი არ მუშაობს ლიფტის ჰოლში',description:'B კორპუსი',comment:'საღამოს შემდეგ გავთიშა',fileCount:1,statusKey:'processing',createdAt:'2026-05-29T16:00:00.000Z'},
+      {id:'ticket-seed-3',subject:'დაცვის გამოძახება',description:'უცნობი პირი ეზოში',comment:'',fileCount:1,statusKey:'resolved',createdAt:'2026-05-20T11:00:00.000Z'}
+    ];
+    let pendingServiceType='',projectsReturnScreen='projects-all',partnersReturnScreen='marketing',constructionReturnScreen='property';
+    const tabs=['profile','property','service','finances','community','menu'];
+    const tabToScreen={profile:'home',property:'property',service:'service',finances:'payments',community:'marketing',menu:'menu'};
+    const screenToTab={home:'profile',menu:'menu',profile:'profile','menu-profile':'menu',property:'property',access:'property','projects-all':'property','project-detail':'property',service:'service','service-new':'service',ticketing:'service',payments:'finances',marketing:'community',notifications:'community','construction-progress':'property','news-detail':'community',settings:'menu',offers:'community',events:'community',partners:'community','partner-detail':'community','how-it-works':'menu',privacy:'menu',terms:'menu'};
+    const screens=[
+      {id:'login',label:'Login'},
+      {id:'home',label:'მთავარი'},
+      {id:'menu',label:'მენიუ'},
+      {id:'property',label:'ქონება'},
+      {id:'access',label:'დაშვება'},
+      {id:'service',label:'სერვისი'},
+      {id:'ticketing',label:'თიქეთინგი'},
+      {id:'payments',label:'ფინანსები'},
+      {id:'marketing',label:'Community'},
+      {id:'projects-all',label:'პროექტები'},
+      {id:'project-detail',label:'პროექტი'},
+      {id:'menu-profile',label:'პროფილი'},
+      {id:'notifications',label:'შეტყობინებები'},
+      {id:'construction-progress',label:'მშენებლობის პროგრესი'},
+      {id:'offers',label:'შეთავაზებები'},
+      {id:'events',label:'ღონისძიებები'},
+      {id:'partners',label:'პარტნიორი კომპანიები'}
+    ];
+    const W2_CARD_URL='https://w2.ge/card';
+    const W2_OFFERS_URL='https://w2.ge/offers';
+    const PARTNER_CATEGORIES={furniture:'ავეჯი',materials:'სარემონტო მასალები',tech:'ტექნიკა',decor:'დეკორი',leisure:'დასვენება და რელაქსაცია',beauty:'სილამაზე და თავის მოვლა',sport:'სპორტული და გასართობი ცენტრები',auto:'ავტომობილები / ავტოსერვისები',mobility:'მობილობის და ტრანსპორტის სერვისები',plumbing:'სანტექნიკა',windows:'კარ-ფანჯარა',alcohol:'ალკოჰოლი',other:'სხვა'};
+    const PARTNER_CATEGORY_BG={furniture:'#EBE4FA',materials:'#E8ECF2',tech:'#DDEAF5',decor:'#F3EDE4',leisure:'#DDF5EA',beauty:'#FFE5DC',sport:'#D4F0E8',auto:'#FBF0D9',mobility:'#E3E9F1',plumbing:'#DDEAF5',windows:'#E8ECF2',alcohol:'#F3EDE4',other:'#E8ECF2'};
+    const PARTNERS=[
+      {id:'gogora',name:'გოგორა',logo:'https://w2.ge/storage/11591/conversions/Untitled-design-(10)-s.jpg',discount:'20%',category:'other',validUntil:'31 დეკ 2026',location:'თბილისი',about:'W2 ქარდის მფლობელებისთვის 20% ფასდაკლება.'},
+      {id:'montessori',name:'მონტესორი უნივერსი',logo:'https://w2.ge/storage/11533/conversions/Untitled-design-(9)-s.jpg',discount:'10%',category:'other',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება ქი ქარდით.'},
+      {id:'klima',name:'კლიმა კომფორტი',logo:'https://w2.ge/storage/9443/conversions/Untitled-design-(2)-s.jpg',discount:'15%',category:'tech',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება კონდიციონერებსა და ტექნიკაზე.'},
+      {id:'vibrant',name:'Vibrant Furniture',logo:'https://w2.ge/storage/9355/conversions/Untitled-design-(3)-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'},
+      {id:'mile',name:'მილე',logo:'https://w2.ge/storage/8773/conversions/006_2019_MielePR_Miele2019FinancialReport_673x379-s.jpg',discount:'10%',category:'tech',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება ტექნიკაზე.'},
+      {id:'tegeta',name:'თეგეტა',logo:'https://w2.ge/storage/8853/conversions/Screenshot-2025-06-19-191143-s.jpg',discount:'50%',category:'auto',validUntil:'31 დეკ 2026',location:'თბილისი',about:'50% ფასდაკლება ავტოსერვისზე.'},
+      {id:'eliti',name:'ელიტი',logo:'https://w2.ge/storage/8854/conversions/461742632_960839169403940_6425340965176478233_n-s.jpg',discount:'10%-მდე',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10%-მდე ფასდაკლება ავეჯსა და ტექნიკაზე.'},
+      {id:'interiorsmo',name:'ინტერიორისმო',logo:'https://w2.ge/storage/8866/conversions/IMG_2903-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'},
+      {id:'newdesign',name:'ნიუ დიზაინი',logo:'https://w2.ge/storage/8916/conversions/ND-s.jpg',discount:'20%-მდე',category:'materials',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20%-მდე ფასდაკლება სარემონტო მასალებზე.'},
+      {id:'vinieron',name:'ვინიერონი',logo:'https://w2.ge/storage/8917/conversions/vign-s.jpg',discount:'15%',category:'alcohol',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ალკოჰოლზე.'},
+      {id:'gorgia',name:'გორგია',logo:'https://w2.ge/storage/8774/conversions/images-(8)-s.jpg',discount:'50%-მდე',category:'materials',validUntil:'31 დეკ 2026',location:'თბილისი',about:'50%-მდე ფასდაკლება სარემონტო მასალებზე.'},
+      {id:'mozaiksi',name:'მოზაიკსი',logo:'https://w2.ge/storage/8863/conversions/WhatsApp-Image-2025-06-24-at-15.51.44_321a6a7f-s.jpg',discount:'10%',category:'materials',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება სარემონტო მასალებზე.'},
+      {id:'eltibi',name:'ელთიბი',logo:'https://w2.ge/storage/8775/conversions/ea9cM4W9_400x400-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'},
+      {id:'worldclass',name:'World Class Georgia',logo:'https://w2.ge/storage/8776/conversions/1631320907211-s.jpg',discount:'15%',category:'sport',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება სპორტულ ცენტრში.'},
+      {id:'nuage',name:'ნუაჟი',logo:'https://w2.ge/storage/8849/conversions/Screenshot-2025-06-19-150526-s.jpg',discount:'10%',category:'beauty',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება სილამაზის სალონში.'},
+      {id:'brandar',name:'ბრენდ არ',logo:'https://w2.ge/storage/8777/conversions/images-(9)-s.jpg',discount:'20%',category:'decor',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება დეკორზე.'},
+      {id:'belmezon',name:'ბელ მეზონი',logo:'https://w2.ge/storage/8848/conversions/2-Belle-Maison-Logo-jpg-s.jpg',discount:'10%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება ავეჯზე.'},
+      {id:'designavenue',name:'დიზაინ ავენიუ',logo:'https://w2.ge/storage/8778/conversions/87fa5a58b7e0f7bc0a58d761833179b2-s.jpg',discount:'15%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ავეჯზე.'},
+      {id:'lutecia',name:'ლუტეცია',logo:'https://w2.ge/storage/8794/conversions/343111356_641595817982725_5322668327783236576_n-s.jpg',discount:'20%',category:'beauty',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება სილამაზის სერვისებზე.'},
+      {id:'lopota',name:'ლოპოტა სპა რეზორტი',logo:'https://w2.ge/storage/8779/conversions/458225027_546811997703710_1033585400793184393_n-s.jpg',discount:'10%',category:'leisure',validUntil:'31 დეკ 2026',location:'ლოპოტა',about:'10% ფასდაკლება დასვენებაზე.'},
+      {id:'bodbe',name:'სასტუმრო ბოდბე',logo:'https://w2.ge/storage/8780/conversions/461780722_122097681464555981_1249723871880512174_n-s.jpg',discount:'15%',category:'leisure',validUntil:'31 დეკ 2026',location:'სიღნაღი',about:'15% ფასდაკლება სასტუმროში.'},
+      {id:'pardis',name:'ფარდის სახლი',logo:'https://w2.ge/storage/8781/conversions/429765909_745141827718163_373402344691825277_n-(1)-s.jpg',discount:'10%',category:'decor',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება დეკორსა და ფარდებზე.'},
+      {id:'forum',name:'ფორუმი',logo:'https://w2.ge/storage/8782/conversions/351153176_921435875795478_8339303382459649767_n-(1)-s.jpg',discount:'15%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ავეჯზე.'},
+      {id:'uniongeo',name:'უნიონ ჯეო',logo:'https://w2.ge/storage/8845/conversions/326583806_1327715451351087_7731718395885002547_n-s.jpg',discount:'15%-მდე',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15%-მდე ფასდაკლება ავეჯზე.'},
+      {id:'villeroy',name:'ვილეროი და ბოხი',logo:'https://w2.ge/storage/8789/conversions/327318343_578873917445862_9042819248906752524_n-s.jpg',discount:'10%',category:'decor',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება დეკორსა და ტექნიკაზე.'},
+      {id:'banio',name:'ბანიო დიზაინი',logo:'https://w2.ge/storage/8843/conversions/Screenshot-2025-06-19-142150-s.jpg',discount:'20%',category:'plumbing',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება სანტექნიკაზე.'},
+      {id:'midea',name:'მიდეა',logo:'https://w2.ge/storage/8783/conversions/248529600_4424412520970504_8983115213968644325_n-s.jpg',discount:'15%',category:'tech',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ტექნიკაზე.'},
+      {id:'misa',name:'მისა',logo:'https://w2.ge/storage/8865/conversions/thumbnail2-s.jpg',discount:'10%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება ავეჯზე.'},
+      {id:'vitraj',name:'ვიტრა ჯორჯია',logo:'https://w2.ge/storage/8784/conversions/480572376_1038378788317071_5985236497183986568_n-s.jpg',discount:'20%',category:'plumbing',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება სანტექნიკაზე.'},
+      {id:'dio',name:'დიო',logo:'https://w2.ge/storage/8862/conversions/logo-s.jpg',discount:'20%-მდე',category:'windows',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20%-მდე ფასდაკლება კარ-ფანჯარაზე.'},
+      {id:'rum',name:'რუმ',logo:'https://w2.ge/storage/8864/conversions/Screenshot-2025-06-30-123415-s.jpg',discount:'15%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ავეჯზე.'},
+      {id:'galeria',name:'გალერეა დემასი',logo:'https://w2.ge/storage/8788/conversions/logo_fb-s.jpg',discount:'10%',category:'materials',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება სარემონტო მასალებზე.'},
+      {id:'bene',name:'ბენე ექსკლუზივი',logo:'https://w2.ge/storage/8850/conversions/bene_exclusive_logo-s.jpg',discount:'10%',category:'mobility',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება მობილობის სერვისებზე.'},
+      {id:'mistery',name:'მისთორი',logo:'https://w2.ge/storage/8796/conversions/448144558_738006435213179_8413558101904387994_n-s.jpg',discount:'20%',category:'tech',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ტექნიკაზე.'},
+      {id:'aitechnics',name:'აიტექნიკსი',logo:'https://w2.ge/storage/8795/conversions/380223732_337149305492181_2295671292564939265_n-(1)-s.jpg',discount:'20%-მდე',category:'tech',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20%-მდე ფასდაკლება ტექნიკაზე.'},
+      {id:'veneto',name:'ვენეტო დიზაინი',logo:'https://w2.ge/storage/8846/conversions/356885251_655430573290407_224787054226188677_n-s.jpg',discount:'15%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ავეჯზე.'},
+      {id:'merlons',name:'მერლონსი',logo:'https://w2.ge/storage/8842/conversions/508340210_1151026520374824_3155897504525847119_n-s.jpg',discount:'20%',category:'plumbing',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება სანტექნიკაზე.'},
+      {id:'smarthouse',name:'სმარტ ჰაუსი',logo:'https://w2.ge/storage/8844/conversions/Screenshot-2025-06-19-142457-s.jpg',discount:'10%',category:'tech',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება ტექნიკაზე.'},
+      {id:'ideal',name:'იდეალი',logo:'https://w2.ge/storage/8787/conversions/images-(10)-s.jpg',discount:'10%',category:'materials',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10% ფასდაკლება სარემონტო მასალებზე.'},
+      {id:'verona',name:'ვერონა',logo:'https://w2.ge/storage/8791/conversions/334010608_224472246812568_3822027229679684786_n-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'},
+      {id:'luxury',name:'ლაქშერი',logo:'https://w2.ge/storage/8792/conversions/287246697_5166357270125099_8776667691664740430_n-s.jpg',discount:'15%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'15% ფასდაკლება ავეჯზე.'},
+      {id:'domino',name:'დომინო',logo:'https://w2.ge/storage/8786/conversions/341344185_3619222891632402_8528138430290686670_n-s.jpg',discount:'10%-მდე',category:'materials',validUntil:'31 დეკ 2026',location:'თბილისი',about:'10%-მდე ფასდაკლება სარემონტო მასალებზე.'},
+      {id:'komforteri',name:'კომფორტერი',logo:'https://w2.ge/storage/8790/conversions/471976568_924450423111699_5309138682786950121_n-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'},
+      {id:'ashley',name:'ეშლი ჰოუმსთორი',logo:'https://w2.ge/storage/8793/conversions/272719590_1170424223772791_8972145473133554352_n-(1)-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'},
+      {id:'saloti',name:'სალოტი',logo:'https://w2.ge/storage/8847/conversions/Screenshot-2025-06-19-145040-s.jpg',discount:'20%',category:'furniture',validUntil:'31 დეკ 2026',location:'თბილისი',about:'20% ფასდაკლება ავეჯზე.'}
+    ];
+    let partnersFilterCat='all';
+    const OFFERS=[
+      {title:'თეთრი კვადრატი მინდელზე — ბინები 950$-დან',desc:'დასრულებულ პროექტში საბურთალოზე, ძოწის ქუჩაზე — კვ.მ 950$-დან!',project:'mindeli',tag:'950$/მ²'},
+      {title:'შარტავა თაუერი — კომერციული ფართი 1500$-დან',desc:'„შარტავა თაუერსში“ კომერციული ფართის შეძენა კვ.მ 1500$-დან არის შესაძლებელი!',project:'shartava',tag:'1500$/მ²'},
+      {title:'ფილიგრინი 2 — ბინა ერთიანი გადახდის ფასად',desc:'შეიძინე ბინა ერთიანი გადახდის ფასად „ფილიგრინი 2-ში“ — გაყავი ბინის სრული ღირებულება ორ ნაწილად.',project:'filigreen-2',tag:'ერთიანი გადახდა'},
+      {title:'საახალწლო შეთავაზებები',desc:'თეთრმა კვადრატმა ახალი წლის ჯადოსნური შეთავაზებები მოგიმზადა! არ გამოტოვო შანსი, შეხვდე ახალ წელს ახალ სახლში.',project:'filigreen-2',tag:'საახალწლო'},
+      {title:'ნოემბრის თვის შეთავაზება — ფილიგრინი 2',desc:'2 საძინებლიანი ბინის ფასი — კვ.მ 1230$',project:'filigreen-2',tag:'1230$/მ²'},
+      {title:'ნოემბრის თვის შეთავაზება — ისანი პარკი',desc:'შეიძინე ბინა კვ.მ 950$ ისანი პარკის მულტიფუნქციურ პროექტში.',project:'isani-park',tag:'950$/მ²'},
+      {title:'ნოემბრის თვის შეთავაზება — თეთრი კვადრატი ჯიქიაზე',desc:'შეიძინე 3 საძინებლიანი ბინა კვ.მ 1100$ ერთიანი გადახდის შემთხვევაში.',project:'jikia',tag:'1100$/მ²'},
+      {title:'ნოემბრის თვის შეთავაზება — ისანი პარკი (დაზოგვა)',desc:'დაზოგე 21 063$, შეიძინე 3 საძინებლიანი ბინა ისანი პარკში!',project:'isani-park',tag:'-21 063$'},
+      {title:'ნოემბრის თვის შეთავაზება — თეთრი კვადრატი მინდელზე',desc:'ისარგებლე შეთავაზებებით, რომელიც აღარ განმეორდება.',project:'mindeli',tag:'ნოემბრი'},
+      {title:'შეარჩიე ბინის რემონტი კვ.მ მხოლოდ 299$',desc:'შეიძინე ბინა თეთრი კვადრატის ნებისმიერ პროექტში და შეარჩიე რემონტი მხოლოდ კვ.მ. 299$-ად!',project:'mindeli',tag:'299$/მ²'},
+      {title:'შარტავა — აივანი საჩუქრად',desc:'შეიძინე ბინა „თეთრი კვადრატი შარტავაზე“ დასრულებულ პროექტში და მიიღე აივანი საჩუქრად!',project:'shartava',tag:'საჩუქარი'},
+      {title:'თეთრი კვადრატი ქუთაისში — კვ.მ 650$-დან',desc:'შეიძინე ბინა „თეთრი კვადრატი ქუთაისის“ პროექტში და მიიღე ფასდაკლება ერთიან გადახდაზე.',project:'kutaisi',tag:'650$/მ²'},
+      {title:'ჯიქია — 3 საძინებლიანი გარემონტებული ბინა',desc:'თეთრი კვადრატი ჯიქის პროექტში გარემონტებული ბინის შეძენა კვ.მ 1580$-ად.',project:'jikia',tag:'1580$/მ²'},
+      {title:'მინდელი — 2 საძინებლიანი ბინა 1311$-ად',desc:'შეიძინე 2 საძინებლიანი ბინა „თეთრი კვადრატი მინდელის“ პროექტში კვ.მ 1311$-ად ერთიანი გადახდით.',project:'mindeli',tag:'1311$/მ²'},
+      {title:'ფილიგრინი 2 — კვ.მ 1330$-დან',desc:'„ფილიგრინი2“ პრემიალური ხაზის პროექტი — ბინის ფასი ერთიანი გადახდით კვ.მ $1,330$-დან.',project:'filigreen-2',tag:'1330$/მ²'},
+      {title:'თეთრი კვადრატის გრანდიოზული გათამაშება',desc:'თუ ბინის შეძენას გეგმავ, არ გაუშვა შანსი — მოიგო ბინა შარტავას დასრულებულ პროექტში!',project:'shartava',tag:'გათამაშება'},
+      {title:'ისანი პარკი — ბინა თვეში $390-დან',desc:'თანამედროვე მულტიფუნქციური კომპლექსი ისანში.',project:'isani-park',tag:'$390/თვე'},
+      {title:'ქუთაისი — ფასდაკლება ყველა გადახდაზე',desc:'„თეთრი კვადრატი ქუთაისის“ პროექტში ფასდაკლება ყველა ტიპის გადახდაზე.',project:'kutaisi',tag:'ფასდაკლება'},
+      {title:'მინდელი — კომერციული ფართები',desc:'ინვესტიცია, რომელიც დროთა განმავლობაში მხოლოდ გაიზრდება.',project:'mindeli',tag:'კომერციული'},
+      {title:'1 საძინებლიანი ბინები საბურთალოზე',desc:'შეიძინე ყველაზე მოთხოვნადი 1 საძინებლიანი ბინები საბურთალოზე საუკეთესო ფასად!',project:'jikia',tag:'საბურთალო'},
+      {title:'საუკეთესო ფასი — 1 კვ.მ 1190$-დან',desc:'მოასწარი ბინის შეძენა საბურთალოზე საუკეთესო ფასად!',project:'mindeli',tag:'1190$/მ²'},
+      {title:'დიდი ფასდაკლება — მხოლოდ 1 დღით',desc:'31 ივლისს, მხოლოდ 1 დღით — ლიმიტირებული შეთავაზება ისანი პარკის პროექტზე!',project:'isani-park',tag:'1 დღე'}
+    ];
+    const PROJECTS=[
+      {id:'urban-ist',name:'Urban East',photo:'https://w2.ge/storage/11917/conversions/12@2x-m.jpg?v=1776253975'},
+      {id:'varketili-5',name:'ვარკეთილი 5',photo:'https://w2.ge/storage/9150/conversions/Varketili-5-m.jpg?v=1759737937'},
+      {id:'varketili-4',name:'ვარკეთილი 4',photo:'https://w2.ge/storage/9149/conversions/Varketili-4-m.jpg?v=1759737929'},
+      {id:'mindeli',name:'მინდელი',photo:'https://w2.ge/storage/412/conversions/mindeli-m.jpg?v=1679940104'},
+      {id:'isani-park',name:'ისანი პარკი',photo:'https://w2.ge/storage/9570/conversions/Untitled-design-(7)-m.jpg?v=1769433215'},
+      {id:'kutaisi',name:'ქუთაისი',photo:'https://w2.ge/storage/4927/conversions/kutaisi-m.jpg?v=1710347195'},
+      {id:'filigreen-2',name:'ფილიგრინი 2',photo:'https://w2.ge/storage/4375/conversions/%E1%83%A4%E1%83%98%E1%83%9A%E1%83%98%E1%83%92%E1%83%A0%E1%83%98%E1%83%9C%E1%83%98-2-m.jpg?v=1701630213'},
+      {id:'filigreen',name:'ფილიგრინი',photo:'https://w2.ge/storage/188/conversions/2-m.jpg?v=1677744182'},
+      {id:'gamrekeli',name:'გამრეკელი',photo:'https://w2.ge/storage/4906/conversions/1-m.jpg?v=1707995614'},
+      {id:'jikia',name:'ჯიქია',photo:'https://w2.ge/storage/189/conversions/jikia-m.jpg?v=1677744576'},
+      {id:'shartava',name:'შარტავა',photo:'https://w2.ge/storage/5/conversions/shartava-m.jpg?v=1676573918'},
+      {id:'varketili-3',name:'ვარკეთილი 3',photo:'https://w2.ge/storage/6080/conversions/3-m-m.jpg?v=1722090542'}
+    ];
+    const PROJECT_ABOUT={
+      "urban-ist":{html:"<p>ახალი საცხოვრებელი კომპლექსი Urban East კახეთის გზატკეცილზე  „თეთრი კვადრატისგან“!</p><p> </p><p>თეთრი კვადრატის კიდევ ერთი ახალი  პროექტი „Urban East “ -ი თბილისში, კახეთის გზატკეცილზე N 63 - ში შენდება.</p><p> </p><p>პროექტი  ჯამში მოიცავს:</p><p> </p><ul><li>2 მიწისქვეშა პარკინგს, რომელიც   108 ცალ საპარკინგე ზონას აერთიანებს.</li><li>ორ კომერციულ სართულს, 2 საოფისე სართულს</li><li>14 საცხოვრებელ სართულს </li><li>ბლოკში ბინების რაოდენობა შეადგენს  308  ცალს.</li></ul><p> </p><p>საცხოვრებელი  კომპლექსის კონცეფცია მომავალი მობინადრეების საჭიროებებზეა  მორგებული. ბინები განსაზღვრულია როგორც საცხოვრებლად, ასევე საინვესტიციოდ. საცხოვრებელი ბინის ფართები იწყება 34,1  კვ. მ.- დან, ხოლო ყველაზე დიდი ბინის ფართობი შეადგენს 95,6 კვ.მ-ს. ეზოში  მოეწყობა სათამაშო და რეკრეაციულიზონა.</p><p> </p><p> საცხოვრებელი კომპლექსი  იქნება ენერგოეფექტური, ადაპტირებული და აღჭურვილი სახანძრო სისტემებით.</p><p> </p><p> </p>",address:"თბილისი, კახეთის გზატკეცილი N63"},
+      "varketili-5":{html:"<p>კიდევ ერთი ახალი პროექტი “თეთრი კვადრატისგან” - “თეთრი კვადრატი ვარკეთილში 5”.</p><p> </p><p>პროექტი პრაქტიკული ადგილმდებარეობით გამოირჩევა, საცხოვრებელი სახლის გარშემო ინფრასტრუქტურა სრულად განვითარებულია, ხელმისაწვდომია ნებისმიერი ტიპის საზოგადოებრივი ტრანსპორტი. </p><p> </p><p>10 სართულიანი საცხოვრებელი კორპუსი აერთიანებს 90 ბინას. ბინების მინიმალური ფართი კი 34.4  კვ.მ-დან იწყება.</p><p> </p><p>მისამართი: თბილისი, ვარკეთილი, მასივი III, კვარტალი X , კორპუსი 9</p><p> </p><p> ბინები სხვადასხვა საჭიროებებზეა მორგებული:  ახალი, დიდი და პატარა ოჯახებისთვის, გასაქირავებლად თუ სტუდენტებისთვის.ახალი კორპუსი 10 სართულიანია, ადაპტირებული და აღჭურვილი სახანძრო სისტემებით.</p><p>მოეწყობა ინფრასტრუქტურა ყველა სტანდარტების დაცვით,  იქნება ეს თანამედროვე ლიფტი თუ სახანძრო უსაფრთხოების სისტემები.</p><p>ბინა ბარდება თეთრი კარკასის ან სრული რემონტის კონდიციაში. </p>",address:"თბილისი, ვარკეთილი, მასივი III, კვარტალი X , კორპუსი 9"},
+      "varketili-4":{html:"<p>თბილისში “თეთრი კვადრატი” ახალ პროექტს გთავაზობთ - „თეთრი კვადრატი ვარკეთილში 4” </p><p> </p><p>საცხოვრებელი სახლის გარშემო ინფრასტრუქტურა სრულადაა განვითარებული, ხელმისაწვდომია სხვადასხვა ტიპის საზოგადოებრივი ტრანსპორტი. </p><p> </p><p>10 სართულიანი კორპუსი ჯამში 129 საცხოვრებელ ბინას, ავტოსადგომსა და კომერციულ ფართებს აერთიანებს. ბინების მინიმალური ფართი 35.1 კვ.მ-დან იწყება.</p><p> </p><p>დასრულების თარიღი: 2028 წელი, მარტი</p><p>მისამართი: თბილისი, ვარკეთილის III მასივი, III კვარტალი - შუამთის #40 </p><p> </p><p> </p><p>ბინები სხვადასხვა საჭიროებებზეა მორგებული:  ახალი, დიდი და პატარა ოჯახებისთვის, გასაქირავებლად თუ სტუდენტებისთვის.ახალი კორპუსი 10 სართულიანია, ადაპტირებული და აღჭურვილი სახანძრო სისტემებით.</p><p>მოეწყობა ინფრასტრუქტურა ყველა სტანდარტების დაცვით,  იქნება ეს თანამედროვე ლიფტი თუ სახანძრო უსაფრთხოების სისტემები.</p><p>ბინა ბარდება თეთრი კარკასის ან სრული რემონტის კონდიციაში.  </p>",address:"თბილისი, ვარკეთილის III მასივი, III კვარტალი - შუამთის #40"},
+      "mindeli":{html:"<p>ახალი უბანი საბურთალოზე „თეთრი კვადრატისგან“</p><p>თეთრი კვადრატის კიდევ ერთი ახალი მასშტაბური პროექტი „თეთრი კვადრატი მინდელზე“ - საცხოვრებელი უბანი  თბილისში, საბურთალოზე ძოწის  ქუჩაზე, შენდება.</p><p>,,თეთრი კვადრატი მინდელზე“ ჯამში 6 საცხოვრებელ კორპუსს აერთიანებს და მოიცავს: ორ 14 სართულიან, ერთი 15 სართულიან და სამ 22 სართულიან კორპუსებს.  თითოეულ საცხოვრებელ სახლში 100-ზე მეტ საცხოვრებელი ბინა და სხვადასხვა ტიპის კომერციული თუ საოფისე ფართებია გათვალისწინებული.</p><p> </p><p>საცხოვრებელი  უბნის კონცეფცია მომავალი მობინადრეების საჭიროებებზეა  მორგებული. ბინები გათვალისწინებულია ახალი ოჯახებისთვის, გასაქირავებლად, სტუდენტებისთვის თუ დიდი ოჯახებისთვის. საცხოვრებელი ბინის ფართები იწყება 53 კვ. მ.-დან.</p><p> </p><p>უბანში მოეწყობა სათამაშო და სპორტული მოედნები, რეკრეაციული ზონა, კაფეები, რესტორნები, სალონები და მობინადრეების საჭიროებებზე მორგებული ბევრი სხვა ობიექტი.</p>",address:"საბურთალო, ძოწის ქ.2"},
+      "isani-park":{html:"<p>ახალი უბანი თეთრი კვადრატისგან <strong>ისანი პარკი</strong> - თანამედროვე ცხოვრებაზე მორგებული, ყველა საჭირო ინფრასტრუქტურით აღჭურვილი, მულტიფუნქციური უბანი ისანში, ნავთლუღის ქუჩაზე.</p><p> </p><p>აქ ყველა დეტალი გათვლილია მათზე, ვისაც სურს ერთ უბანში სრულყოფილი საცხოვრებელი პირობების შექმნა.</p><p> </p><p>ეს არის უბანი ბაღით, სკოლით, კომერციული სივრცეებით, გამწვანებული პარკებით, სათამაშო და სპორტული მოედნებით.</p><p> </p><p><i><strong>„ისანი პარკი“ - შენი გამწვანებული უბანი სრულყოფილი ცხოვრებისთვის.</strong></i></p>",address:"ისანი, ჰოსპიტლის შესახვევი N 5/ვლადიმერ ლობჟანიძის ქუჩა N 7"},
+      "kutaisi":{html:"<p>„თეთრი კვადრატი ქუთაისში” - ახალი პროექტი ქალაქ ქუთაისში, ლადო ასათიანის ქუჩაზე შენდება.</p><p> </p><p>15-სართულიანი კორპუსი 307 საცხოვრებელ ბინასა და სხვადასხვა ტიპის კომერციულ და საოფისე ფართებს აერთიანებს.</p><p> </p><p>ხელსაყრელი მდებარეობა განსაკუთრებით საინტერესოა მათთვის ვინც ბინის შეძენას საცხოვრებლად თუ საინვესტიციოდ გეგმავს.</p><p><br>პროექტის ჩრდილოეთით იშლება ხედი ბაგრატის ტაძარზე.</p>",address:"ქუთაისი , ლადო ასათიანის 96"},
+      "filigreen-2":{html:"<p style=\"text-align:justify;\">თეთრი კვადრატის ახალი მასშტაბური პროექტი ,,ფილიგრინი2“ - საცხოვრებელი უბანი თბილისში, საბურთალოზე, ნაფეტვრებისკენ მიმავალ გზაზე, გ.დანელიას 61 ში შენდება.</p><p style=\"text-align:justify;\">ეს არის იდეა ქალაქის ხმაურისა და თანამედროვე რიტმში ვიპოვოთ ადგილი ქალაქის ცენტრში, რომელიც ყოველ საღამოს, სახლში მისვლისას განსხვავებულ, სიმშვიდით გაჯერებულ რეალობაში გადაიყვანს ჩვენს მობინადრეებს.</p><p style=\"text-align:justify;\">,,ფილიგრინი2 ‘’ადგილი ადამიანის და ბუნების ჰარმონიული თანაარსებობისთვის. პროექტი ჯამში 6 საცხოვრებელ კორპუსს აერთიანებს და </p><p style=\"text-align:justify;\">მოიცავს: ოთხ 8-სართულიან და ორ 9-სართულიან კორპუსებს. თითოეულ საცხოვრებელ სახლში 43 დან 60 საცხოვრებელი ბინა და სხვადასხვა ტიპის კომერციული თუ საოფისე ფართებია გათვალისწინებული.</p><p style=\"text-align:justify;\">საცხოვრებელი უბნის კონცეფცია მომავალი მობინადრეების საჭიროებებზეა მორგებული. ბინები გათვალისწინებულია ახალი ოჯახებისთვის, გასაქირავებლად, სტუდენტებისთვის თუ დიდი ოჯახებისთვის. საცხოვრებელი ბინის ფართები იწყება 65 კვ. მ.-დან.</p><p style=\"text-align:justify;\">პროექტის ტერიტორიაზე მოეწყობა სათამაშო და სპორტული მოედნები, რეკრეაციული ზონა, მოსასვენებელი სივრცეები და სხვა.</p>",address:"საბურთალო, გიორგი დანელიას ქ. 61"},
+      "filigreen":{html:"<p>ექსკლუზიური, 80 ბინიანი საცხოვრებელი სახლი, საბურთალოზე, გიორგი დანელიას ქუჩაზე .</p><p> </p><p>ფილიგრინი არის იდეა ქალაქის ხმაურისა და თანამედროვე რიტმში ვიპოვოთ ადგილი ქალაქის ცენტრში, რომელიც ყოველ საღამოს, სახლში მისვლისას განსხვავებულ, სიმშვიდით გაჯერებულ რეალობაში გადაიყვანს ჩვენს მობინადრეებს.</p><p> </p><p>ფილიგრინი ეს არის ადგილი ადამიანის და ბუნების ჰარმონიული თანაარსებობისთვის.</p><p>ბინები სხვადასხვა საჭიროებებზეა მორგებული: ახალი ოჯახებისთვის, გასაქირავებლად, საინვესტიციოდ თუ დიდი ოჯახებისთვის.</p><p> </p><p>საცხოვრებელი ბინის ფართები იწყება 67 კვ. მ. დან</p>",address:"საბურთალო, გიორგი დანელიას ქ.12"},
+      "gamrekeli":{html:"<p>„თეთრი კვადრატი გამრეკელზე“ ახალი საცხოვრებელი სახლი თბილისში, საბურთალოს ცენტრში, გამრეკელის ქუჩაზე, შენდება. 8-სართულიანი კორპუსი 41 საცხოვრებელ ბინასა და კომერციულ ფართს აერთიანებს. ტერიტორიაზე მოხვედრა შესაძლებელია როგორც გამრეკელის მხრიდან, ასევე პეკინის, მიცკევიჩის და ცინცაძის ქუჩებიდანაც.</p><p>ხელსაყრელი მდებარეობა განსაკუთრებით საინტერესოა მათთვის ვინც ბინის შეძენას საცხოვრებლად თუ საინვესტიციოდ გეგმავს. ბინები სხვადასხვა საჭიროებებზეა მორგებული: ახალი ოჯახებისთვის, გასაქირავებლად, სტუდენტებისთვის თუ დიდი ოჯახებისთვის.</p>",address:"საბურთალო, დ. გამრეკელის ქ 6"},
+      "jikia":{html:"<p>„თეთრი კვადრატი ჯიქიაზე“ თბილისში, საბურთალოს ცენტრში, პოლიტკოვსკაიას (ყოფილი ჯიქიას) ქუჩაზე, შენდება. პროექტს აქვს ხელსაყრელი მდებარეობა, იგი განსაკუთრებით საინტერესოა აქტიური ცხოვრების მოყვარულებისთვის. ასევე მათთვის ვინც ბინის შეძენას საინვესტიციოდ თუ გასაქირავებლად ფიქრობს.</p><p>19 სართულიანი კორპუსი 283 საცხოვრებელ ბინასა და სხვადასხვა ტიპის კომერციულ ფართებს აერთიანებს. </p>",address:"საბურთალო, ა. პოლიტკოვსკაიას ქ.12"},
+      "shartava":{html:"<p>ახალი საცხოვრებელი სახლი თბილისში, საბურთალოს რაიონში, შარტავას ქუჩაზე. პროექტს აქვს ხელსაყრელი მდებარეობა, იგი განსაკუთრებით საინტერესოა აქტიური ცხოვრების მოყვარულებისთვის.</p><p>ასევე მათთვის ვინც ფიქრობს ბინის საინვესტიციოდ თუ გასაქირავებლად შეძენას.</p><p><br>• მშენებლობა დასრულებულია.<br>  მშენებლობის დაწყების თარიღია 2020 წლის დეკემბერი.</p><p> </p><p> </p><p>ბინები სხვადასხვა საჭიროებებზეა მორგებული: ახალი ოჯახებისთვის, გასაქირავებლად, საინვესტიციოდ, სტუდენტებისა თუ დიდი ოჯახებისთვის. საცხოვრებელი ბინის ფართები იწყება 62 კვ. მ.-დან.</p>",address:"საბურთალო, ჟ. შარტავას  ქ.43"},
+      "varketili-3":{html:"<p>„თეთრი კვადრატი ვარკეთილში3” თბილისში, ვარკეთილის ცენტრში, კალოუბნის ქუჩაზე შენდება. საცხოვრებელი სახლის გარშემო ინფრასტრუქტურა სრულადაა განვითარებული და ხელმისაწვდომია ნებისმიერი ტიპის საზოგადოებრივიტრანსპორტი. <br>მეტროსადგური \"ვარკეთილი\" მდებარეობს 850 მეტრში</p><p>10 სართულიანი კორპუსი ჯამში 79 საცხოვრებელ ბინას და კომერციულ ფართებს აერთიანებს. ბინების მინიმალური ფართი 34,4 კვ.მ დან იწყება</p>",address:"ვარკეთილი, თრიალეთის ქუჩა"}
+    };
+    function getSelectedProjectId(){
+      const stored=localStorage.getItem(PROJECT_KEY);
+      if(stored&&PROJECTS.some(p=>p.id===stored))return stored;
+      return 'urban-ist';
+    }
+    function setSelectedProjectId(id){localStorage.setItem(PROJECT_KEY,id);updatePropertyProjectUI()}
+    const PROGRESS_LABELS={ongoing:'მიმდინარე',completed:'დასრულებული'};
+    const CONSTRUCTION_PROGRESS=[
+      {dateSort:20260528,date:'28 მაი 2026',title:'იატაკის ფილის მოწყობა',text:'დასრულებულია მე-10 სართულის იატაკის ფილის მოწყობა.'},
+      {dateSort:20260515,date:'15 მაი 2026',title:'კედლების მოწყობა',text:'პერიმეტრის ბლოკის კედლების მოწყობა დასრულებულია მე-8 სართულზე.'},
+      {dateSort:20260515,date:'15 მაი 2026',title:'შიდა ტიხრების მოწყობა',text:'შიდა ტიხრების მოწყობა დასრულებულია მე-8 სართულზე.'},
+      {dateSort:20260428,date:'28 აპრ 2026',title:'ელექტროდაქსელვა',text:'ბინების ელექტროდაქსელვის სამუშაოები დასრულებულია მე-6 საცხოვრებელ სართულზე.'},
+      {dateSort:20260410,date:'10 აპრ 2026',title:'აივნის მოაჯირები',text:'აივნის მოაჯირების მონტაჟი დასრულებულია მე-5 საცხოვრებელ სართულზე.'},
+      {dateSort:20260322,date:'22 მარ 2026',title:'გათბობა და წყალარინება',text:'გათბობისა და წყალარინების სისტემების მოწყობა დასრულებულია მე-3 საცხოვრებელ სართულზე.'},
+      {dateSort:20260315,date:'15 მარ 2026',title:'ვიტრაჟების მოწყობა',text:'ვიტრაჟების მოწყობა დასრულებულია მე-2 საცხოვრებელ სართულზე.'}
+    ];
+    function renderConstructionProgress(){
+      const el=document.getElementById('constructionProgressFeed');
+      const hint=document.getElementById('constructionProgressHint');
+      const p=PROJECTS.find(x=>x.id===getSelectedProjectId())||PROJECTS[0];
+      if(hint)hint.textContent=`ბოლოს დასრულებული სამუშაოები · ${p.name} — ქრონოლოგიურად.`;
+      if(!el)return;
+      const sorted=[...CONSTRUCTION_PROGRESS].sort((a,b)=>b.dateSort-a.dateSort);
+      el.innerHTML=sorted.map(it=>`<div class="feed-card feed-card--static"><span class="tag tag-teal">${it.date}</span><h4>${it.title}</h4><p>${it.text}</p></div>`).join('');
+    }
+    const UNIT_BY_PROJECT={
+      'urban-ist':{block:'1',floor:'8',no:'804',rooms:'3',totalSqm:'78.5',internalSqm:'65.2',balconySqm:'10.1',progress:'ongoing',deadline:'31 დეკ 2028'},
+      'varketili-5':{block:'9',floor:'5',no:'52',rooms:'2',totalSqm:'64.0',internalSqm:'54.0',balconySqm:'8.0',progress:'ongoing',deadline:'31 მარ 2027'},
+      'varketili-4':{block:'X',floor:'7',no:'40',rooms:'3',totalSqm:'72.0',internalSqm:'60.5',balconySqm:'9.2',progress:'ongoing',deadline:'30 სექ 2027'},
+      mindeli:{block:'1',floor:'4',no:'12',rooms:'2',totalSqm:'58.0',internalSqm:'49.0',balconySqm:'6.5',progress:'ongoing',deadline:'15 ივლ 2027'},
+      'isani-park':{block:'A',floor:'6',no:'15',rooms:'3',totalSqm:'85.0',internalSqm:'71.0',balconySqm:'10.0',progress:'ongoing',deadline:'31 ოქტ 2027'},
+      kutaisi:{block:'1',floor:'3',no:'96',rooms:'3',totalSqm:'76.0',internalSqm:'64.0',balconySqm:'8.8',progress:'ongoing',deadline:'20 მაი 2027'},
+      'filigreen-2':{block:'2',floor:'9',no:'61',rooms:'2',totalSqm:'55.5',internalSqm:'47.0',balconySqm:'5.5',progress:'ongoing',deadline:'1 აპრ 2027'},
+      filigreen:{block:'1',floor:'6',no:'12',rooms:'3',totalSqm:'68.0',internalSqm:'57.5',balconySqm:'7.2',progress:'ongoing',deadline:'30 ივნ 2026'},
+      gamrekeli:{block:'1',floor:'5',no:'6',rooms:'2',totalSqm:'52.0',internalSqm:'44.0',balconySqm:'5.0',progress:'ongoing',deadline:'31 იან 2027'},
+      jikia:{block:'1',floor:'4',no:'12',rooms:'2',totalSqm:'48.5',internalSqm:'41.0',balconySqm:'4.8',progress:'ongoing',deadline:'15 თებ 2027'},
+      shartava:{block:'1',floor:'7',no:'43',rooms:'3',totalSqm:'74.0',internalSqm:'62.0',balconySqm:'8.5',progress:'ongoing',deadline:'30 ნოე 2026'},
+      'varketili-3':{block:'3',floor:'10',no:'18',rooms:'2',totalSqm:'61.0',internalSqm:'51.5',balconySqm:'6.8',progress:'ongoing',deadline:'31 აგვ 2026'}
+    };
+    function updatePropertyProjectUI(){
+      const p=PROJECTS.find(x=>x.id===getSelectedProjectId())||PROJECTS[0];
+      const u=UNIT_BY_PROJECT[p.id]||UNIT_BY_PROJECT['urban-ist'];
+      const g=document.getElementById('greetProjectName');
+      if(g)g.textContent=p.name;
+      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+      const renderImg=document.getElementById('propertyRenderImg');
+      const renderCap=document.getElementById('propertyRenderCap');
+      if(renderImg){renderImg.src=p.photo;renderImg.alt=p.name}
+      if(renderCap)renderCap.textContent=p.name;
+      const cImg=document.getElementById('constructionRenderImg');
+      const cCap=document.getElementById('constructionRenderCap');
+      if(cImg){cImg.src=p.photo;cImg.alt=p.name}
+      if(cCap)cCap.textContent=p.name;
+      set('propFieldProject',p.name);set('propFieldBlock',u.block);set('propFieldFloor',u.floor);set('propFieldNo',u.no);
+      set('propFieldRooms',u.rooms);set('propFieldTotalSqm',u.totalSqm);set('propFieldInternalSqm',u.internalSqm);set('propFieldBalconySqm',u.balconySqm);
+      set('propFieldDeadline',u.deadline||'31 დეკ 2028');
+      set('propFieldStatus',PROGRESS_LABELS[u.progress]||PROGRESS_LABELS.ongoing);
+      set('profFieldAddress',`თბილისი, ${p.name}, კორპ. ${u.block}, ბ. ${u.no}`);
+      document.querySelectorAll('[data-project-id]').forEach(c=>c.classList.toggle('project-card-active',c.dataset.projectId===p.id));
+      const cHint=document.getElementById('constructionProgressHint');
+      if(cHint)cHint.textContent=`ბოლოს დასრულებული სამუშაოები · ${p.name} — ქრონოლოგიურად.`;
+    }
+    function getProfilePhone(){
+      const el=document.getElementById('profFieldPhone');
+      if(!el)return'+995599123456';
+      const fromHref=(el.getAttribute('href')||'').replace(/^tel:/i,'').replace(/\s/g,'');
+      if(fromHref)return fromHref;
+      return(el.textContent||'').replace(/\s/g,'')||'+995599123456';
+    }
+    function syncTopbarCallLink(){
+      const a=document.getElementById('topbarCallLink');
+      if(a)a.href='tel:'+getProfilePhone().replace(/\s/g,'');
+    }
+    function formatPhoneDisplay(digits){
+      const d=(digits||'').replace(/\D/g,'');
+      if(d.length===12&&d.startsWith('995'))return`+${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,8)} ${d.slice(8,10)} ${d.slice(10)}`;
+      if(d.length>=9)return digits.startsWith('+')?digits:`+${d}`;
+      return digits||'';
+    }
+    function fillProjectLeadForm(projectId){
+      const idEl=document.getElementById('projectLeadProjectId');
+      const phoneEl=document.getElementById('projectLeadPhone');
+      const commentEl=document.getElementById('projectLeadComment');
+      if(idEl)idEl.value=projectId||'';
+      if(phoneEl)phoneEl.value=formatPhoneDisplay(getProfilePhone());
+      if(commentEl)commentEl.value='';
+    }
+    function updateProjectsAboutUI(projectId){
+      const p=PROJECTS.find(x=>x.id===projectId)||PROJECTS[0];
+      const about=PROJECT_ABOUT[p.id];
+      const aboutEl=document.getElementById('projectsProjectAbout');
+      const addrEl=document.getElementById('projectsProjectAddress');
+      const title=document.getElementById('projectDetailTitle');
+      if(title)title.textContent=p.name;
+      if(aboutEl)aboutEl.innerHTML=about?about.html:'';
+      if(addrEl)addrEl.textContent=about?about.address:'';
+      fillProjectLeadForm(p.id);
+      document.querySelectorAll('#projectsGridAll [data-project-id]').forEach(c=>c.classList.toggle('project-card-active',c.dataset.projectId===p.id));
+    }
+    function setProjectsDetailMode(on){
+      document.querySelector('.phone')?.classList.toggle('projects-detail-mode',!!on);
+      const ps=document.getElementById('propertySections');
+      if(ps)ps.hidden=!!on;
+    }
+    function showProjectsDetail(projectId,returnTo){
+      const cur=getActiveScreenId();
+      projectsReturnScreen=returnTo||(cur==='home'?'home':'projects-all');
+      updateProjectsAboutUI(projectId);
+      setProjectsDetailMode(true);
+      const scrollEl=document.querySelector('.screen[data-screen="project-detail"] .project-detail-about');
+      if(scrollEl)scrollEl.scrollTop=0;
+      showScreen('project-detail');
+    }
+    function projectCardHTML(p,large){
+      const cls=large?'project-card-lg project-card':'project-card';
+      return `<button type="button" class="${cls}" data-project-id="${p.id}"><div class="project-visual" style="background-image:url('${p.photo}')"></div><div class="project-overlay"></div><span class="project-name">${p.name}</span></button>`;
+    }
+    let loginSlideTimer=null;
+    let loginBgIdx=0;
+    const LOGIN_SLIDE_IDS=['urban-ist','varketili-5','varketili-4','mindeli','isani-park','kutaisi'];
+    function loginSlideFromProject(id){
+      const p=PROJECTS.find(x=>x.id===id);
+      return p?{name:p.name,photo:p.photo}:null;
+    }
+    function getLoginBgSlides(){
+      return LOGIN_SLIDE_IDS.map(id=>loginSlideFromProject(id)).filter(Boolean);
+    }
+    function loginBgSlideHTML(s,i){
+      const src=encodeURI(s.photo);
+      const name=(s.name||'').replace(/"/g,'');
+      return `<div class="login-bg-slide${i===0?' on':''}" data-slide="${i}"><img src="${src}" alt="${name}" width="1920" height="1080" decoding="async"${i===0?' fetchpriority="high"':''}></div>`;
+    }
+    function loginBgGoTo(i){
+      const root=document.getElementById('loginBgSlideshow');
+      const slides=root?[...root.querySelectorAll('.login-bg-slide')]:[];
+      if(!slides.length)return;
+      const idx=((i%slides.length)+slides.length)%slides.length;
+      slides.forEach((s,j)=>s.classList.toggle('on',j===idx));
+      loginBgIdx=idx;
+    }
+    function stopLoginSlideshow(){
+      if(loginSlideTimer){clearInterval(loginSlideTimer);loginSlideTimer=null;}
+    }
+    function restartLoginSlideshow(){
+      stopLoginSlideshow();
+      loginSlideTimer=setInterval(()=>loginBgGoTo(loginBgIdx+1),2000);
+    }
+    function renderLoginBg(){
+      const loginBg=document.getElementById('loginBgSlideshow');
+      if(!loginBg)return;
+      loginBgIdx=0;
+      const slides=getLoginBgSlides();
+      loginBg.innerHTML=slides.map((s,i)=>loginBgSlideHTML(s,i)).join('');
+      slides.forEach(s=>{const img=new Image();img.src=s.photo});
+      loginBgGoTo(0);
+      restartLoginSlideshow();
+    }
+    function offerPhoto(projectId){const p=PROJECTS.find(x=>x.id===projectId);return p?p.photo:PROJECTS[0].photo}
+    function offerTagClass(tag){return/tag|გათამაშ|საახალწლ/i.test(tag)?'tag-violet':'tag-teal'}
+    function offerCardHTML(o){
+      const tagCls=offerTagClass(o.tag);
+      const photo=offerPhoto(o.project);
+      return`<a class="feed-card offer-card" href="${W2_OFFERS_URL}" target="_blank" rel="noopener noreferrer"><span class="offer-card-img" style="background-image:url('${photo}')" role="img" aria-label=""></span><span class="offer-card-body"><span class="tag ${tagCls}">${o.tag}</span><h4>${o.title}</h4><p>${o.desc}</p></span></a>`;
+    }
+    function renderOffers(){const el=document.getElementById('offersFeed');if(el)el.innerHTML=OFFERS.map(offerCardHTML).join('')}
+    function partnersFiltered(){return partnersFilterCat==='all'?PARTNERS:PARTNERS.filter(p=>p.category===partnersFilterCat)}
+    function partnerCardHTML(p){
+      const bg=PARTNER_CATEGORY_BG[p.category]||'#E8ECF2';
+      const visual=p.logo?`background-image:url('${p.logo}')`: `background:linear-gradient(145deg,${bg} 0%,#fff 88%)`;
+      return`<button type="button" class="project-card-lg project-card partner-card" data-partner-id="${p.id}" aria-label="${p.name} — ${p.discount}"><span class="partner-discount-badge">${p.discount}</span><div class="project-visual" style="${visual}"></div></button>`;
+    }
+    function partnerDiscountDisplay(discount){
+      const s=(discount||'').trim();
+      const m=s.match(/(\d+)\s*%/);
+      if(m)return m[1]+'%';
+      return s||'';
+    }
+    function partnerStoryHTML(p,idx){
+      const tone=PARTNER_CATEGORY_BG[p.category]||'#3d5f7a';
+      const hot=idx%2===0?' home-story-card--hot':'';
+      const bgStyle=p.logo?`background-image:url('${p.logo}');background-color:${tone}`:`background:linear-gradient(165deg,${tone} 0%,#1e3a52 100%)`;
+      const disc=partnerDiscountDisplay(p.discount);
+      const name=(p.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      return`<div class="home-story-wrap"><button type="button" class="home-story-card${hot}" data-partner-id="${p.id}" aria-label="${name} — ${disc}"><span class="home-story-border"><span class="home-story-inner"><span class="home-story-bg" style="${bgStyle}"></span><span class="home-story-overlay" aria-hidden="true"></span><span class="home-story-content"><span class="home-story-lbl">ისარგებლეთ</span><span class="home-story-pct">${disc}</span><span class="home-story-meta">${name}</span></span></span></span></button></div>`;
+    }
+    function bindHomePartnersScroll(){
+      const sc=document.getElementById('homePartnersStories');
+      const prev=document.getElementById('homePartnersScrollPrev');
+      const next=document.getElementById('homePartnersScrollNext');
+      if(!sc||!prev||!next)return;
+      const step=()=>Math.max(116,Math.round(sc.clientWidth*.5));
+      const sync=()=>{
+        prev.disabled=sc.scrollLeft<=2;
+        next.disabled=sc.scrollLeft+sc.clientWidth>=sc.scrollWidth-2;
+      };
+      prev.onclick=()=>sc.scrollBy({left:-step(),behavior:'smooth'});
+      next.onclick=()=>sc.scrollBy({left:step(),behavior:'smooth'});
+      if(!sc.dataset.scrollBound){
+        sc.dataset.scrollBound='1';
+        sc.addEventListener('scroll',sync,{passive:true});
+        window.addEventListener('resize',sync,{passive:true});
+      }
+      sync();
+    }
+    function renderHomePartners(){
+      const el=document.getElementById('homePartnersStories');
+      if(el)el.innerHTML=PARTNERS.map((p,i)=>partnerStoryHTML(p,i)).join('');
+      bindHomePartnersScroll();
+    }
+    function renderPartnersFilter(){
+      const el=document.getElementById('partnersFilter');if(!el)return;
+      const items=[{id:'all',label:'ყველა'}].concat(Object.entries(PARTNER_CATEGORIES).map(([id,label])=>({id,label})));
+      el.innerHTML=items.map(it=>`<button type="button" class="partners-filter-btn${partnersFilterCat===it.id?' on':''}" data-partner-cat="${it.id}">${it.label}</button>`).join('');
+    }
+    function renderPartnersGrid(){
+      const g=document.getElementById('partnersGridAll');if(!g)return;
+      g.innerHTML=partnersFiltered().map(partnerCardHTML).join('');
+    }
+    function renderPartners(){renderPartnersFilter();renderPartnersGrid()}
+    function showPartnerDetail(partnerId,returnTo){
+      const p=PARTNERS.find(x=>x.id===partnerId)||PARTNERS[0];
+      partnersReturnScreen=returnTo||getActiveScreenId();
+      const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+      setT('partnerDetailTitle',p.name);
+      const logoEl=document.getElementById('partnerDetailLogo');
+      if(logoEl){
+        logoEl.innerHTML=p.logo?`<img src="${p.logo}" alt="${p.name}" width="320" height="120" loading="lazy" decoding="async">`:'';
+        logoEl.setAttribute('aria-hidden',p.logo?'false':'true');
+      }
+      setT('partnerOfferLine',`${p.discount} · ${PARTNER_CATEGORIES[p.category]||''}`);
+      const body=document.getElementById('partnerAboutBody');
+      if(body)body.innerHTML=`<p>${p.about}</p><p style="margin-top:10px">ქი ქარდის მფლობელებს ექსკლუზიური პირობები მოქმედებს პარტნიორ კომპანიაში. დეტალური ინფორმაცია: <a href="${W2_CARD_URL}" target="_blank" rel="noopener noreferrer">w2.ge/card</a></p>`;
+      setT('partnerValidUntil',p.validUntil||'—');
+      setT('partnerLocation',p.location||'თბილისი');
+      showScreen('partner-detail');
+    }
+    function renderProjects(){
+      renderLoginBg();
+      renderOffers();
+      renderPartners();
+      renderHomePartners();
+      const g=document.getElementById('projectsGridAll');if(g)g.innerHTML=PROJECTS.map(p=>projectCardHTML(p,true)).join('');
+      updatePropertyProjectUI();
+      syncTopbarCallLink();
+      renderConstructionProgress();
+    }
+    renderProjects();
+    const nav=document.getElementById('nav');
+    screens.forEach(s=>{const b=document.createElement('button');b.textContent=s.label;b.dataset.screen=s.id;if(s.id==='home')b.classList.add('active');b.onclick=()=>showScreen(s.id);nav.appendChild(b)});
+    function getActiveScreenId(){
+      const s=document.querySelector('.screen.active');
+      return s?s.dataset.screen:'home';
+    }
+    function showScreen(id){
+      const prevId=getActiveScreenId();
+      const navId=id;
+      if(navId==='partners'&&prevId!=='partners'&&prevId!=='partner-detail')partnersReturnScreen=prevId;
+      const partnersBack=document.getElementById('partnersBack');
+      if(partnersBack&&navId==='partners')partnersBack.dataset.goto=partnersReturnScreen;
+      if(navId==='construction-progress'&&prevId!=='construction-progress')constructionReturnScreen=prevId;
+      const constructionBack=document.getElementById('constructionBack');
+      if(constructionBack&&navId==='construction-progress')constructionBack.dataset.goto=constructionReturnScreen;
+      document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.dataset.screen===id));
+      document.querySelectorAll('.screen-nav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===navId));
+      const tabId=screenToTab[navId]||(tabs.includes(navId)?navId:null);
+      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',!!tabId&&t.dataset.tab===tabId));
+      document.getElementById('tabBar').style.display=navId==='login'?'none':'flex';
+      if(navId==='login')restartLoginSlideshow();
+      else stopLoginSlideshow();
+      document.getElementById('appTopbar').classList.toggle('visible',navId==='home'||navId==='property'||navId==='access'||navId==='projects-all'||navId==='project-detail'||navId==='service'||navId==='service-new'||navId==='ticketing'||navId==='payments'||navId==='menu-profile'||navId==='construction-progress'||tabId==='community'||tabId==='menu');
+      if(navId==='property'){
+        setProjectsDetailMode(false);
+        const ps=document.getElementById('propertySections');
+        if(ps)ps.hidden=false;
+        updatePropertyProjectUI();
+      }else if(navId==='home'||navId==='menu-profile')updatePropertyProjectUI();
+      if(navId==='project-detail')setProjectsDetailMode(true);
+      else if(navId!=='property')setProjectsDetailMode(false);
+      if(navId==='partners')renderPartners();
+      if(navId==='home')renderHomePartners();
+      if(navId==='construction-progress')renderConstructionProgress();
+      if(navId==='service'){initServiceRequests();renderServiceRequests();setServiceTab('catalog')}
+      if(navId==='ticketing'){initTickets();renderTickets();setTicketTab('new')}
+      if(id==='payments'){
+        renderFinServiceTable(FIN_LIFT,'finLiftTableBody','finLiftDueAmt');
+        renderFinServiceTable(FIN_GUARD,'finGuardTableBody','finGuardDueAmt');
+        renderFinServiceTable(FIN_CLEANING,'finCleaningTableBody','finCleaningDueAmt');
+        updateFinServiceSummary();
+        renderFinPropertyTable();
+      }
+    }
+    document.getElementById('loginForm')?.addEventListener('submit',e=>{
+      e.preventDefault();
+      localStorage.setItem(AUTH_KEY,'1');
+      showScreen('home');
+    });
+    document.getElementById('btnForgotPass')?.addEventListener('click',()=>alert('პაროლის აღდგენის ბმული მალე დაემატება.'));
+    document.getElementById('btnRegister')?.addEventListener('click',()=>alert('რეგისტრაცია მალე დაემატება.'));
+    document.getElementById('btnMenuLogout')?.addEventListener('click',()=>{localStorage.removeItem(AUTH_KEY);showScreen('login')});
+    document.getElementById('btnServiceLink')?.addEventListener('click',()=>{
+      const url='https://community.app/service/abc123';
+      navigator.clipboard?.writeText(url).catch(()=>{});
+      alert('სერვისის ლინკი დაკოპირდა:\n'+url);
+    });
+    document.getElementById('tabBar').querySelectorAll('.tab').forEach(t=>t.onclick=()=>showScreen(tabToScreen[t.dataset.tab]));
+    document.getElementById('tabBar')?.addEventListener('click',e=>{
+      const g=e.target.closest('[data-goto]');
+      if(g){e.preventDefault();showScreen(g.dataset.goto)}
+    });
+    document.getElementById('appTopbar')?.addEventListener('click',e=>{
+      const g=e.target.closest('[data-goto]');
+      if(g){e.preventDefault();showScreen(g.dataset.goto)}
+    });
+    document.getElementById('projectLeadForm')?.addEventListener('submit',e=>{
+      e.preventDefault();
+      const projectId=document.getElementById('projectLeadProjectId')?.value||'';
+      const p=PROJECTS.find(x=>x.id===projectId);
+      const phone=(document.getElementById('projectLeadPhone')?.value||'').trim();
+      const comment=(document.getElementById('projectLeadComment')?.value||'').trim();
+      if(!phone){alert('გთხოვთ, მიუთითოთ ტელეფონი');return}
+      const lead={id:'lead-'+Date.now(),projectId,projectName:p?p.name:projectId,phone,comment,createdAt:new Date().toISOString()};
+      try{
+        const list=JSON.parse(localStorage.getItem(LEADS_KEY)||'[]');
+        list.unshift(lead);
+        localStorage.setItem(LEADS_KEY,JSON.stringify(list));
+      }catch(err){}
+      alert('მოთხოვნა გაიგზავნა.\nპროექტი: '+(p?p.name:projectId)+'\nტელეფონი: '+phone+(comment?'\nკომენტარი: '+comment:''));
+      document.getElementById('projectLeadComment').value='';
+    });
+    document.getElementById('projectDetailBack')?.addEventListener('click',()=>{
+      setProjectsDetailMode(false);
+      showScreen(projectsReturnScreen);
+    });
+    document.getElementById('partnerDetailBack')?.addEventListener('click',()=>showScreen(partnersReturnScreen));
+    document.getElementById('screenContent').addEventListener('click',e=>{
+      const pf=e.target.closest('[data-partner-cat]');
+      if(pf){e.preventDefault();partnersFilterCat=pf.dataset.partnerCat;renderPartners();return}
+      const pk=e.target.closest('[data-partner-id]');
+      if(pk){e.preventDefault();showPartnerDetail(pk.dataset.partnerId,getActiveScreenId());return}
+      const pb=e.target.closest('[data-project-id]');
+      if(pb){
+        e.preventDefault();
+        if(pb.closest('#projectsGridAll')){showProjectsDetail(pb.dataset.projectId,'projects-all');return}
+        return;
+      }
+      const svc=e.target.closest('[data-service-type]');if(svc){e.preventDefault();openServiceRequest(svc.dataset.serviceType);return}
+      const g=e.target.closest('[data-goto]');if(g){e.preventDefault();showScreen(g.dataset.goto)}
+    });
+    function setServiceTab(tab){
+      document.querySelectorAll('[data-service-tab]').forEach(b=>b.classList.toggle('on',b.dataset.serviceTab===tab));
+      document.querySelectorAll('.service-panel[data-service-panel]').forEach(p=>p.classList.toggle('active',p.dataset.servicePanel===tab));
+    }
+    document.querySelectorAll('[data-service-tab]').forEach(btn=>btn.onclick=()=>setServiceTab(btn.dataset.serviceTab));
+    function setTicketTab(tab){
+      document.querySelectorAll('[data-ticket-tab]').forEach(b=>b.classList.toggle('on',b.dataset.ticketTab===tab));
+      document.querySelectorAll('.ticket-panel[data-ticket-panel]').forEach(p=>p.classList.toggle('active',p.dataset.ticketPanel===tab));
+    }
+    document.querySelectorAll('[data-ticket-tab]').forEach(btn=>btn.onclick=()=>setTicketTab(btn.dataset.ticketTab));
+    function getTickets(){
+      try{return JSON.parse(localStorage.getItem(TICKETS_KEY)||'[]')}catch(e){return[]}
+    }
+    function saveTickets(list){localStorage.setItem(TICKETS_KEY,JSON.stringify(list))}
+    function normalizeTicketStatus(key){
+      if(key==='resolved'||key==='done')return 'resolved';
+      if(key==='processing'||key==='ordered')return 'processing';
+      return 'new';
+    }
+    function normalizeTicket(t){
+      return {...t,subject:t.subject||t.summary||'',description:t.description||'',comment:t.comment||'',statusKey:normalizeTicketStatus(t.statusKey)};
+    }
+    function initTickets(){
+      if(!getTickets().length)saveTickets(TICKET_SEEDS.map(t=>({...t})));
+    }
+    function resetTicketUploadUI(){
+      const input=document.getElementById('ticketUpload');
+      const label=document.getElementById('ticketUploadLabel');
+      const hint=document.getElementById('ticketFilesHint');
+      if(input)input.value='';
+      if(label)label.classList.remove('has-file');
+      if(hint){hint.hidden=true;hint.textContent=''}
+    }
+    function syncTicketUploadUI(){
+      const input=document.getElementById('ticketUpload');
+      const label=document.getElementById('ticketUploadLabel');
+      const hint=document.getElementById('ticketFilesHint');
+      const n=input?.files?.length||0;
+      if(label)label.classList.toggle('has-file',n>0);
+      if(hint){
+        if(n>0){hint.hidden=false;hint.textContent=`${n} ფაილი არჩეულია`}
+        else{hint.hidden=true;hint.textContent=''}
+      }
+    }
+    function renderTickets(){
+      const el=document.getElementById('ticketList');
+      if(!el)return;
+      let list=getTickets().map(normalizeTicket);
+      saveTickets(list);
+      list=list.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+      if(!list.length){el.innerHTML='<p class="service-req-empty">თიქეთები ჯერ არ გაქვთ</p>';return}
+      el.innerHTML=list.map((t,i)=>{
+        const statusKey=t.statusKey||'new';
+        const statusLabel=TICKET_STATUS[statusKey]||TICKET_STATUS.new;
+        const statusCls=TICKET_STATUS_CLASS[statusKey]||TICKET_STATUS_CLASS.new;
+        const num=String(list.length-i).padStart(4,'0');
+        const desc=t.description?`<p class="service-req-meta">აღწერა: ${t.description.replace(/</g,'&lt;')}</p>`:'';
+        const comment=t.comment?`<p class="service-req-meta">კომენტარი: ${t.comment.replace(/</g,'&lt;')}</p>`:'';
+        const files=t.fileCount?`<p class="service-req-meta">ფოტო/ვიდეო: ${t.fileCount}</p>`:'';
+        return `<article class="service-req-card">
+          <p class="ticket-id-lbl">#TK-${num}</p>
+          <h4>${t.subject.replace(/</g,'&lt;')}</h4>
+          ${desc}
+          <p class="service-req-meta">გაგზავნა: ${formatServiceDatetime(t.createdAt)}</p>
+          ${files}
+          ${comment}
+          <span class="service-req-status ${statusCls}">${statusLabel}</span>
+        </article>`;
+      }).join('');
+    }
+    document.getElementById('ticketNewForm')?.addEventListener('change',e=>{
+      if(e.target.id==='ticketUpload')syncTicketUploadUI();
+    });
+    document.getElementById('ticketNewForm')?.addEventListener('submit',e=>{
+      e.preventDefault();
+      const subject=document.getElementById('ticketSummary')?.value?.trim();
+      const description=document.getElementById('ticketDescription')?.value?.trim()||'';
+      const fileCount=document.getElementById('ticketUpload')?.files?.length||0;
+      if(!subject)return;
+      const list=getTickets();
+      list.push({id:String(Date.now()),subject,description,comment:'',fileCount,statusKey:'new',createdAt:new Date().toISOString()});
+      saveTickets(list);
+      document.getElementById('ticketSummary').value='';
+      document.getElementById('ticketDescription').value='';
+      resetTicketUploadUI();
+      renderTickets();
+      setTicketTab('list');
+    });
+    function getServiceRequests(){
+      try{return JSON.parse(localStorage.getItem(SERVICE_REQUESTS_KEY)||'[]')}catch(e){return[]}
+    }
+    function saveServiceRequests(list){localStorage.setItem(SERVICE_REQUESTS_KEY,JSON.stringify(list))}
+    function statusForRankFromNew(rank){
+      if(rank<=0)return 'new';
+      if(rank===1)return 'processing';
+      if(rank===2)return 'ordered';
+      return 'done';
+    }
+    function applyServiceStatuses(list){
+      if(!list.length)return list;
+      const asc=[...list].sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+      const n=asc.length;
+      const map=new Map(asc.map((r,i)=>[r.id,statusForRankFromNew(n-1-i)]));
+      return list.map(r=>{
+        let statusKey=map.get(r.id)||'new';
+        if(r.service==='დიასახლისის მომსახურება')statusKey='done';
+        return {...r,statusKey};
+      });
+    }
+    function initServiceRequests(){
+      if(!getServiceRequests().length)saveServiceRequests(SERVICE_REQUEST_SEEDS.map(r=>({...r})));
+    }
+    function formatServiceDatetime(iso){
+      if(!iso)return '—';
+      const d=new Date(iso);
+      if(Number.isNaN(d.getTime()))return iso;
+      const m=FIN_MONTHS[d.getMonth()+1]||'';
+      const hh=String(d.getHours()).padStart(2,'0');
+      const mm=String(d.getMinutes()).padStart(2,'0');
+      return `${d.getDate()} ${m} ${d.getFullYear()}, ${hh}:${mm}`;
+    }
+    const DTP_MONTHS_FULL=['','იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+    function initServiceDatetimePicker(){
+      const root=document.getElementById('serviceReqDatetimePicker');
+      if(!root)return;
+      const display=document.getElementById('serviceReqDatetimeDisplay');
+      const hidden=document.getElementById('serviceReqDatetime');
+      const pop=document.getElementById('serviceReqDatetimePopover');
+      const trigger=document.getElementById('serviceReqDatetimeTrigger');
+      const daysEl=document.getElementById('serviceReqDtpDays');
+      const monthLbl=document.getElementById('serviceReqDtpMonthLabel');
+      const hourSel=document.getElementById('serviceReqDtpHour');
+      const minSel=document.getElementById('serviceReqDtpMinute');
+      const pad=n=>String(n).padStart(2,'0');
+      const startOfDay=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x};
+      const sameDay=(a,b)=>startOfDay(a).getTime()===startOfDay(b).getTime();
+      const toValue=(d,h,m)=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(h)}:${pad(m)}`;
+      const state={view:new Date(),selected:null,hour:10,minute:0,open:false};
+      hourSel.innerHTML=Array.from({length:24},(_,h)=>`<option value="${h}">${pad(h)}</option>`).join('');
+      minSel.innerHTML=['00','30'].map(m=>`<option value="${m}">${m}</option>`).join('');
+      hourSel.value='10';
+      minSel.value='00';
+      function renderCalendar(){
+        const y=state.view.getFullYear(),mo=state.view.getMonth();
+        monthLbl.textContent=`${DTP_MONTHS_FULL[mo+1]} ${y}`;
+        const first=new Date(y,mo,1);
+        const start=new Date(first);
+        start.setDate(start.getDate()-((first.getDay()+6)%7));
+        const today=startOfDay(new Date());
+        daysEl.innerHTML=Array.from({length:42},(_,i)=>{
+          const cell=new Date(start);
+          cell.setDate(start.getDate()+i);
+          const out=cell.getMonth()!==mo;
+          const dis=startOfDay(cell)<today;
+          const on=state.selected&&sameDay(cell,state.selected);
+          return`<button type="button" class="dtp-day${out?' out':''}${on?' on':''}" data-ts="${cell.getTime()}"${dis?' disabled':''}>${cell.getDate()}</button>`;
+        }).join('');
+      }
+      function setOpen(on){
+        state.open=on;
+        pop.hidden=!on;
+        trigger.setAttribute('aria-expanded',on?'true':'false');
+        if(on)renderCalendar();
+      }
+      function applySelection(){
+        if(!state.selected){
+          display.setCustomValidity('აირჩიეთ თარიღი');
+          display.reportValidity();
+          return false;
+        }
+        state.hour=+hourSel.value;
+        state.minute=+minSel.value;
+        const v=toValue(state.selected,state.hour,state.minute);
+        hidden.value=v;
+        display.value=formatServiceDatetime(v);
+        display.setCustomValidity('');
+        setOpen(false);
+        return true;
+      }
+      window.clearServiceReqDatetime=()=>{
+        state.selected=null;
+        state.view=new Date();
+        state.hour=10;
+        state.minute=0;
+        hidden.value='';
+        display.value='';
+        display.setCustomValidity('');
+        hourSel.value='10';
+        minSel.value='00';
+        setOpen(false);
+        renderCalendar();
+      };
+      trigger.addEventListener('click',e=>{e.preventDefault();setOpen(pop.hidden)});
+      display.addEventListener('click',()=>setOpen(true));
+      display.addEventListener('focus',()=>setOpen(true));
+      document.getElementById('serviceReqDtpApply')?.addEventListener('click',applySelection);
+      root.querySelector('.dtp-prev')?.addEventListener('click',()=>{state.view=new Date(state.view.getFullYear(),state.view.getMonth()-1,1);renderCalendar()});
+      root.querySelector('.dtp-next')?.addEventListener('click',()=>{state.view=new Date(state.view.getFullYear(),state.view.getMonth()+1,1);renderCalendar()});
+      daysEl.addEventListener('click',e=>{
+        const btn=e.target.closest('[data-ts]');
+        if(!btn||btn.disabled)return;
+        state.selected=new Date(+btn.dataset.ts);
+        renderCalendar();
+      });
+      document.addEventListener('click',e=>{
+        if(!state.open||root.contains(e.target))return;
+        setOpen(false);
+      });
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.open)setOpen(false)});
+      renderCalendar();
+    }
+    initServiceDatetimePicker();
+    function renderServiceRequests(){
+      const el=document.getElementById('serviceRequestsList');
+      if(!el)return;
+      let list=applyServiceStatuses(getServiceRequests());
+      saveServiceRequests(list);
+      list=list.sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+      if(!list.length){el.innerHTML='<p class="service-req-empty">მოთხოვნები ჯერ არ გაქვთ</p>';return}
+      el.innerHTML=list.map(r=>{
+        const statusKey=r.statusKey||'new';
+        const statusLabel=SERVICE_STATUS[statusKey]||SERVICE_STATUS.new;
+        const statusCls=SERVICE_STATUS_CLASS[statusKey]||SERVICE_STATUS_CLASS.new;
+        const comment=r.comment?`<p class="service-req-meta">კომენტარი: ${r.comment.replace(/</g,'&lt;')}</p>`:'';
+        return `<article class="service-req-card">
+          <h4>${r.service.replace(/</g,'&lt;')}</h4>
+          <p class="service-req-meta">სავარაუდო ვიზიტი: ${formatServiceDatetime(r.datetime)}</p>
+          <p class="service-req-meta">გაგზავნა: ${formatServiceDatetime(r.createdAt)}</p>
+          ${comment}
+          <span class="service-req-status ${statusCls}">${statusLabel}</span>
+        </article>`;
+      }).join('');
+    }
+    function openServiceRequest(serviceName){
+      pendingServiceType=serviceName;
+      const title=document.getElementById('serviceNewTitle');
+      if(title)title.textContent=serviceName;
+      if(window.clearServiceReqDatetime)window.clearServiceReqDatetime();
+      const c=document.getElementById('serviceReqComment');
+      if(c)c.value='';
+      showScreen('service-new');
+    }
+    document.getElementById('serviceRequestForm')?.addEventListener('submit',e=>{
+      e.preventDefault();
+      const datetime=document.getElementById('serviceReqDatetime')?.value;
+      const comment=document.getElementById('serviceReqComment')?.value?.trim()||'';
+      const display=document.getElementById('serviceReqDatetimeDisplay');
+      if(!datetime){
+        if(display){display.setCustomValidity('აირჩიეთ თარიღი და დრო');display.reportValidity()}
+        return;
+      }
+      if(!pendingServiceType)return;
+      const list=getServiceRequests();
+      list.push({id:String(Date.now()),service:pendingServiceType,datetime,comment,statusKey:'new',createdAt:new Date().toISOString()});
+      saveServiceRequests(list);
+      pendingServiceType='';
+      showScreen('service');
+      setServiceTab('requests');
+    });
+    initServiceRequests();
+    renderServiceRequests();
+    (function initServiceStickyHead(){
+      const head=document.getElementById('serviceStickyHead');
+      const sc=document.querySelector('.screen-content');
+      if(!head||!sc)return;
+      const sync=()=>head.classList.toggle('is-stuck',sc.scrollTop>4);
+      sc.addEventListener('scroll',sync,{passive:true});
+      sync();
+    })();
+    (function initTicketStickyHead(){
+      const head=document.getElementById('ticketStickyHead');
+      const sc=document.querySelector('.screen-content');
+      if(!head||!sc)return;
+      const sync=()=>head.classList.toggle('is-stuck',sc.scrollTop>4);
+      sc.addEventListener('scroll',sync,{passive:true});
+      sync();
+    })();
+    document.querySelectorAll('.pay-tab[data-pay-tab]').forEach(btn=>btn.onclick=()=>{
+      document.querySelectorAll('.pay-tab[data-pay-tab]').forEach(b=>b.classList.toggle('on',b===btn));
+      document.querySelectorAll('.pay-panel[data-pay-panel]').forEach(p=>p.classList.toggle('active',p.dataset.payPanel===btn.dataset.payTab));
+      const isProperty=btn.dataset.payTab==='property';
+      document.getElementById('finServiceHeadSummary')?.toggleAttribute('hidden',isProperty);
+      document.getElementById('finPropertyHeadSummary')?.toggleAttribute('hidden',!isProperty);
+    });
+
+    const FIN_AS_OF='2026-06-20';
+    const FIN_PROPERTY={
+      totalValue:55700,
+      installmentCount:30,
+      startDate:'2026-03-15',
+      payments:[
+        {date:'2026-03-20',amount:1950},
+        {date:'2026-06-10',amount:950}
+      ]
+    };
+    function finMonthlyServiceInstallments(monthlyAmount,count=6){
+      return Array.from({length:count},(_,i)=>({date:`2026-${String(i+1).padStart(2,'0')}-01`,amount:monthlyAmount}));
+    }
+    function finMonthlyServicePayments(monthlyAmount,count=6,day=15){
+      return Array.from({length:count},(_,i)=>({date:`2026-${String(i+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,amount:monthlyAmount}));
+    }
+    const FIN_LIFT={
+      installments:finMonthlyServiceInstallments(12),
+      payments:[
+        {date:'2026-02-15',amount:12},
+        {date:'2026-04-20',amount:12}
+      ]
+    };
+    const FIN_GUARD={
+      installments:finMonthlyServiceInstallments(20),
+      payments:finMonthlyServicePayments(20,5)
+    };
+    const FIN_CLEANING={
+      installments:finMonthlyServiceInstallments(5),
+      payments:[
+        ...finMonthlyServicePayments(5,5),
+        {date:'2026-06-02',amount:8}
+      ]
+    };
+    const FIN_SERVICES=[FIN_LIFT,FIN_GUARD,FIN_CLEANING];
+    const FIN_SERVICE_MONTHLY=37;
+    const FIN_TABLE_INITIAL=7;
+    let finTableExpanded=false;
+
+    function finGenerateInstallments(){
+      const {totalValue,installmentCount,startDate}=FIN_PROPERTY;
+      const base=Math.floor((totalValue/installmentCount)*100)/100;
+      const [sy,sm,sd]=startDate.split('-').map(Number);
+      const list=[];
+      for(let i=0;i<installmentCount;i++){
+        let y=sy,m=sm+i;
+        while(m>12){m-=12;y++}
+        const amount=i===installmentCount-1?Math.round((totalValue-base*(installmentCount-1))*100)/100:base;
+        list.push({date:`${y}-${String(m).padStart(2,'0')}-${String(sd).padStart(2,'0')}`,amount});
+      }
+      return list;
+    }
+    function finFormatUsd(n){
+      const parts=Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+      return `${parts} აშშ დოლარი`;
+    }
+
+    function finAllocatePayments(installments,payments){
+      const insts=installments.map(i=>({date:i.date,amount:i.amount,paid:0})).sort((a,b)=>a.date.localeCompare(b.date));
+      const pool=payments.map(p=>({date:p.date,amount:p.amount})).sort((a,b)=>a.date.localeCompare(b.date));
+      let pi=0;
+      for(const inst of insts){
+        while(inst.paid<inst.amount&&pi<pool.length){
+          const need=inst.amount-inst.paid;
+          const use=Math.min(need,pool[pi].amount);
+          inst.paid+=use;
+          pool[pi].amount-=use;
+          if(pool[pi].amount<=0)pi++;
+        }
+      }
+      return new Map(insts.map(s=>[s.date,s]));
+    }
+    function finIsOverdue(installDate,amount,paid,asOf){
+      return asOf>installDate&&paid<amount;
+    }
+    function finFormatDate(iso){
+      const p=iso.split('-');return `${+p[2]} ${FIN_MONTHS[+p[1]]} ${p[0]}`;
+    }
+    function finFormatAmt(n){
+      const parts=n.toFixed(2).split('.');
+      parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+      return parts.join('.');
+    }
+    function finFormatGel(n){return `${finFormatAmt(n)} ₾`}
+    function finFormatDebtAmt(n){
+      if(n<=0.009)return finFormatAmt(0);
+      return `-${finFormatAmt(n)}`;
+    }
+    function finFormatDebtGel(n){return `${finFormatDebtAmt(n)} ₾`}
+    function finFormatDebtUsd(n){
+      if(n<=0.009)return finFormatUsd(0);
+      const parts=Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+      return `-${parts} აშშ დოლარი`;
+    }
+    const FIN_AMT_COLOR='#1C1917';
+    const FIN_PAID_COLOR='var(--pastel-mint-on)';
+    const FIN_PAID_BG='var(--pastel-mint-bg)';
+    function finPaintPaymentsBlack(){
+      document.querySelectorAll('[data-screen="payments"] .fin-install-val,[data-screen="payments"] .pay-due-amt,[data-screen="payments"] .fin-table-install,[data-screen="payments"] .fin-table-pay,[data-screen="payments"] .fin-table-balance').forEach(el=>{
+        if(el.classList.contains('fin-install-paid')||el.classList.contains('fin-install-accrued')){el.style.color=FIN_PAID_COLOR;el.style.background=FIN_PAID_BG;return}
+        if(el.classList.contains('is-paid')||el.classList.contains('is-credit')){el.style.color=FIN_PAID_COLOR;return}
+        el.style.color=FIN_AMT_COLOR;
+      });
+    }
+    function finApplyDebtAmt(el,debt,withGel=true){
+      if(!el)return;
+      const isDebt=debt>0.009;
+      const isCredit=debt<-0.009;
+      if(withGel){
+        el.textContent=isDebt?finFormatDebtGel(debt):isCredit?`+${finFormatAmt(Math.abs(debt))} ₾`:finFormatGel(0);
+      }else{
+        el.textContent=isDebt?`${finFormatDebtAmt(debt)} $`:finFormatAmt(0)+' $';
+      }
+      el.classList.toggle('is-debt',isDebt);
+      el.classList.toggle('is-credit',isCredit);
+      el.classList.toggle('is-zero',!isDebt&&!isCredit);
+      el.classList.remove('is-overdue');
+      el.style.color=FIN_AMT_COLOR;
+      const wrap=el.closest('.pay-due-expand');
+      if(wrap)wrap.classList.toggle('overdue',isDebt);
+    }
+    function buildFinTimeline({installments,payments},asOf=FIN_AS_OF){
+      const paidMap=finAllocatePayments(installments,payments);
+      const rows=[];
+      installments.forEach(i=>{
+        const st=paidMap.get(i.date)||{paid:0};
+        rows.push({
+          date:i.date,
+          install:i.amount,
+          overdue:finIsOverdue(i.date,i.amount,st.paid,asOf),
+          kind:'install'
+        });
+      });
+      payments.forEach(p=>{
+        rows.push({date:p.date,pay:p.amount,kind:'pay'});
+      });
+      rows.sort((a,b)=>{
+        const byDate=a.date.localeCompare(b.date);
+        if(byDate!==0)return byDate;
+        return a.kind==='install'?-1:1;
+      });
+      return rows;
+    }
+    function finBalanceFromDebt(debt,date,asOf){
+      if(debt<-0.009)return{balanceText:`+${finFormatAmt(Math.abs(debt))} ₾`,balanceStatus:'is-credit'};
+      if(debt<=0.009)return{balanceText:finFormatGel(0),balanceStatus:'is-ok'};
+      return{balanceText:finFormatDebtAmt(debt),balanceStatus:date>asOf?'is-future':'is-overdue'};
+    }
+    function finApplyInstallBalances(rows,installments,asOf){
+      let debt=0;
+      return rows.map(r=>{
+        if(r.kind==='install'){debt+=r.install;return{...r,...finBalanceFromDebt(debt,r.date,asOf)};}
+        debt-=r.pay;return{...r,...finBalanceFromDebt(debt,r.date,asOf)};
+      });
+    }
+    function finNextPayment(installments,payments,asOf=FIN_AS_OF){
+      const paidMap=finAllocatePayments(installments,payments);
+      const sorted=[...installments].sort((a,b)=>a.date.localeCompare(b.date));
+      const remaining=i=>{
+        const st=paidMap.get(i.date)||{paid:0};
+        return Math.max(0,i.amount-st.paid);
+      };
+      let hit=sorted.find(i=>i.date>=asOf&&remaining(i)>0.009);
+      if(!hit)hit=sorted.find(i=>remaining(i)>0.009);
+      if(!hit)return null;
+      return {date:hit.date,amount:remaining(hit)};
+    }
+    function finNextPaymentDayOnOrAfter(asOf=FIN_AS_OF,day=15){
+      const [y,m,d]=asOf.split('-').map(Number);
+      let payY=y,payM=m;
+      if(d>=day){payM++;if(payM>12){payM=1;payY++}}
+      return `${payY}-${String(payM).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    }
+    function finNextServiceBundle(asOf=FIN_AS_OF){
+      let amount=0;
+      FIN_SERVICES.forEach(s=>{
+        const n=finNextPayment(s.installments,s.payments,asOf);
+        if(n)amount+=n.amount;
+      });
+      if(amount<=0.009)return null;
+      return {date:finNextPaymentDayOnOrAfter(asOf),amount};
+    }
+    function updateFinPropertySummary(installments,payments){
+      const paid=payments.reduce((s,p)=>s+p.amount,0);
+      const remain=Math.max(0,FIN_PROPERTY.totalValue-paid);
+      const next=finNextPayment(installments,payments);
+      const pv=document.getElementById('finPropertyValue');
+      const pp=document.getElementById('finPropertyPaid');
+      const pr=document.getElementById('finPropertyRemain');
+      const pnd=document.getElementById('finPropertyNextDate');
+      const pna=document.getElementById('finPropertyNextAmount');
+      if(pv)pv.textContent=finFormatUsd(FIN_PROPERTY.totalValue);
+      if(pp)pp.textContent=finFormatUsd(paid);
+      if(pr){
+        pr.textContent=finFormatDebtUsd(remain);
+        pr.classList.toggle('is-debt',remain>0.009);
+      }
+      if(pnd)pnd.textContent=next?finFormatDate(next.date):'—';
+      if(pna)pna.textContent=next?finFormatUsd(next.amount):'—';
+      finPaintPaymentsBlack();
+    }
+    function updateFinServiceSummary(){
+      let accrued=0,paid=0;
+      FIN_SERVICES.forEach(s=>{
+        accrued+=s.installments.reduce((a,i)=>a+i.amount,0);
+        paid+=s.payments.reduce((a,p)=>a+p.amount,0);
+      });
+      const remain=Math.max(0,accrued-paid);
+      const next=finNextServiceBundle();
+      const sv=document.getElementById('finServiceValue');
+      const sa=document.getElementById('finServiceAccrued');
+      const sp=document.getElementById('finServicePaid');
+      const sr=document.getElementById('finServiceRemain');
+      const snd=document.getElementById('finServiceNextDate');
+      const sna=document.getElementById('finServiceNextAmount');
+      if(sv)sv.textContent=finFormatGel(FIN_SERVICE_MONTHLY)+' / თვე';
+      if(sa)sa.textContent=finFormatGel(accrued);
+      if(sp)sp.textContent=finFormatGel(paid);
+      if(sr){
+        sr.textContent=finFormatDebtGel(remain);
+        sr.classList.toggle('is-debt',remain>0.009);
+      }
+      if(snd)snd.textContent=next?finFormatDate(next.date):'—';
+      if(sna)sna.textContent=next?finFormatGel(next.amount):'—';
+      finPaintPaymentsBlack();
+    }
+    function renderFinServiceTable({installments,payments},bodyId,amtId){
+      const el=document.getElementById(bodyId);
+      const amtEl=document.getElementById(amtId);
+      if(!el)return;
+      const rows=finApplyInstallBalances(buildFinTimeline({installments,payments}),installments,FIN_AS_OF);
+      el.innerHTML=rows.map(r=>`
+        <div class="fin-table-row">
+          <span class="fin-table-date">${finFormatDate(r.date)}</span>
+          <span class="fin-table-install">${r.install!=null?finFormatGel(r.install):''}</span>
+          <span class="fin-table-pay${r.pay!=null?' is-paid':''}">${r.pay!=null?finFormatGel(r.pay):''}</span>
+          <span class="fin-table-balance ${r.balanceStatus}${r.balanceStatus==='is-overdue'?' is-debt':''}">${r.balanceText||''}</span>
+        </div>`).join('');
+      let debt=0;
+      rows.forEach(r=>{if(r.kind==='install')debt+=r.install;else if(r.pay)debt-=r.pay});
+      if(amtEl)finApplyDebtAmt(amtEl,debt,true);
+      finPaintPaymentsBlack();
+    }
+    function bindPayDueExpand(btnId){
+      document.getElementById(btnId)?.addEventListener('click',()=>{
+        const btn=document.getElementById(btnId);
+        const wrap=btn?.closest('.pay-due-expand');
+        if(!wrap||!btn)return;
+        const open=wrap.classList.toggle('open');
+        btn.setAttribute('aria-expanded',open?'true':'false');
+      });
+    }
+    bindPayDueExpand('btnPayDueLift');
+    bindPayDueExpand('btnPayDueGuard');
+    bindPayDueExpand('btnPayDueCleaning');
+    bindPayDueExpand('btnPayDuePropertySchedule');
+    renderFinServiceTable(FIN_LIFT,'finLiftTableBody','finLiftDueAmt');
+    renderFinServiceTable(FIN_GUARD,'finGuardTableBody','finGuardDueAmt');
+    renderFinServiceTable(FIN_CLEANING,'finCleaningTableBody','finCleaningDueAmt');
+    updateFinServiceSummary();
+
+    function renderFinPropertyTable(){
+      const el=document.getElementById('finPropertyTableBody');
+      const btn=document.getElementById('finTableMoreBtn');
+      const amtEl=document.getElementById('finPropertyScheduleAmt');
+      const wrap=document.getElementById('payDuePropertySchedule');
+      if(!el)return;
+      const installments=finGenerateInstallments();
+      const payments=FIN_PROPERTY.payments;
+      updateFinPropertySummary(installments,payments);
+      const rows=finApplyInstallBalances(buildFinTimeline({installments,payments}),installments,FIN_AS_OF);
+      const paid=payments.reduce((s,p)=>s+p.amount,0);
+      const remain=Math.max(0,FIN_PROPERTY.totalValue-paid);
+      const hasOverdue=rows.some(r=>r.balanceStatus==='is-overdue');
+      if(wrap)wrap.classList.toggle('overdue',hasOverdue);
+      if(amtEl)finApplyDebtAmt(amtEl,remain,false);
+      const hiddenCount=Math.max(0,rows.length-FIN_TABLE_INITIAL);
+      el.innerHTML=rows.map((r,i)=>{
+        const hidden=!finTableExpanded&&i>=FIN_TABLE_INITIAL;
+        return `
+        <div class="fin-table-row${hidden?' is-hidden':''}">
+          <span class="fin-table-date">${finFormatDate(r.date)}</span>
+          <span class="fin-table-install">${r.install!=null?finFormatAmt(r.install):''}</span>
+          <span class="fin-table-pay${r.pay!=null?' is-paid':''}">${r.pay!=null?finFormatAmt(r.pay):''}</span>
+          <span class="fin-table-balance ${r.balanceStatus}">${r.balanceText}</span>
+        </div>`;
+      }).join('');
+      if(btn){
+        if(hiddenCount>0){
+          btn.hidden=false;
+          btn.textContent=finTableExpanded?`ნაკლები (${hiddenCount})`:`მეტი (+${hiddenCount})`;
+        }else{
+          btn.hidden=true;
+        }
+      }
+      finPaintPaymentsBlack();
+    }
+    document.getElementById('finTableMoreBtn')?.addEventListener('click',()=>{
+      finTableExpanded=!finTableExpanded;
+      renderFinPropertyTable();
+    });
+    renderFinPropertyTable();
+
+    function bindAccordionSections(root){
+      if(!root||root.dataset.accordionBound)return;
+      root.dataset.accordionBound='1';
+      root.addEventListener('click',e=>{
+        if(e.target.closest('.prop-pdf-link'))return;
+        const docHead=e.target.closest('.prop-doc-head');
+        if(docHead){
+          const grp=docHead.closest('[data-prop-doc-group]');
+          const open=grp.classList.toggle('open');
+          docHead.setAttribute('aria-expanded',open?'true':'false');
+          return;
+        }
+        const head=e.target.closest('.prop-section-head');
+        if(head){
+          const sec=head.closest('[data-prop-section]');
+          const open=sec.classList.toggle('open');
+          head.setAttribute('aria-expanded',open?'true':'false');
+        }
+      });
+    }
+    bindAccordionSections(document.getElementById('propertySections'));
+    bindAccordionSections(document.getElementById('profileSections'));
+    function loadProfilePhoto(){
+      const data=localStorage.getItem(PHOTO_KEY);
+      const img=document.getElementById('profileAvatarImg');
+      const avatar=document.getElementById('profileAvatar');
+      if(!img||!avatar)return;
+      if(data){
+        img.src=data;
+        avatar.classList.add('has-photo');
+      }else{
+        img.removeAttribute('src');
+        avatar.classList.remove('has-photo');
+      }
+    }
+    function generateAccessCode(){
+      return String(Math.floor(100000+Math.random()*900000));
+    }
+    function setAccessCode(v){
+      const el=document.getElementById('accessCodeValue');
+      if(el)el.textContent=v;
+    }
+    function getAccessCode(){
+      return document.getElementById('accessCodeValue')?.textContent?.trim()||'';
+    }
+    function refreshAccessCode(){
+      setAccessCode(generateAccessCode());
+    }
+    async function shareAccessCode(){
+      const code=getAccessCode();
+      const text=`დაშვების კოდი: ${code}`;
+      if(navigator.share){
+        try{
+          await navigator.share({title:'დაშვების კოდი',text});
+          return;
+        }catch(e){
+          if(e&&e.name==='AbortError')return;
+        }
+      }
+      try{
+        await navigator.clipboard.writeText(text);
+        alert('კოდი დაკოპირდა');
+      }catch(e){
+        alert(text);
+      }
+    }
+    function bindAccessActions(){
+      document.getElementById('btnAccessRefresh')?.addEventListener('click',refreshAccessCode);
+      document.getElementById('btnAccessShare')?.addEventListener('click',shareAccessCode);
+    }
+    function bindProfilePhoto(){
+      const input=document.getElementById('profilePhotoInput');
+      const btn=document.getElementById('btnChangePhoto');
+      btn?.addEventListener('click',()=>input?.click());
+      input?.addEventListener('change',()=>{
+        const file=input.files?.[0];
+        if(!file)return;
+        if(!file.type.startsWith('image/')){alert('გთხოვთ, აირჩიოთ სურათის ფაილი');input.value='';return}
+        const reader=new FileReader();
+        reader.onload=()=>{
+          try{
+            localStorage.setItem(PHOTO_KEY,reader.result);
+            loadProfilePhoto();
+          }catch(e){
+            alert('ფოტო ძალიან დიდია — სცადეთ უფრო პატარა სურათი');
+          }
+          input.value='';
+        };
+        reader.onerror=()=>{alert('ფოტოს ჩატვირთვა ვერ მოხერხდა');input.value=''};
+        reader.readAsDataURL(file);
+      });
+    }
+    refreshAccessCode();
+    bindAccessActions();
+    loadProfilePhoto();
+    bindProfilePhoto();
+
+    showScreen(localStorage.getItem(AUTH_KEY)==='1'?'home':'login');
+  </script>
+</body>
+</html>

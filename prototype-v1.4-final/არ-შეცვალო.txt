@@ -1,0 +1,6 @@
+საბოლოო ვერსია: v1.4-final (2026-06-03)
+
+ეს ფოლდერი არის W2 APP\prototype-ის სრული snapshot.
+არ შეცვალო ამ ფოლდერის ფაილები — სამუშაო ვერსია: W2 APP\prototype\index.html
+
+გახსნა snapshot-ისთვის: index-v1.4-final.html (ან index.html ამ ფოლდერში)

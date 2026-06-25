@@ -1,0 +1,11 @@
+
+საბოლოო ვერსია: v10-final (2026-06-09)
+
+დაბლოკირებული snapshot (არ შეცვალო):
+
+- index-v10-final.html
+- theme-v10-final.css
+
+მუშა ვერსია: index.html
+
+სრული ფოლდერი: W2 APP\prototype-v10-final\

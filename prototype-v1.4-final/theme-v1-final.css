@@ -1,0 +1,36 @@
+/* სამეზობლოს — საკუთარი ვიზუალური იდენტობა */
+:root {
+  --primary: #0D9488;
+  --primary-dark: #0F5C54;
+  --primary-soft: #CCFBF1;
+  --accent: #EA580C;
+  --accent-soft: #FFEDD5;
+  --violet: #7C3AED;
+  --violet-soft: #EDE9FE;
+  --bg: #E8EAED;
+  --bg-page: #D4D8DE;
+  --chrome-line: rgba(28, 25, 23, 0.08);
+  --chrome-dark: #15253B;
+  --chrome-dark-2: #1A2F47;
+  --chrome-on-dark: #FFFFFF;
+  --chrome-on-dark-muted: rgba(255, 255, 255, 0.7);
+  --surface: #FFFFFF;
+  --surface-muted: #F3F4F6;
+  --text: #1C1917;
+  --text-muted: #6B7280;
+  --border: #D1D5DB;
+  --success: #16A34A;
+  --warning: #CA8A04;
+  --error: #DC2626;
+  --shadow: 0 4px 24px rgba(28, 25, 23, 0.06);
+  --shadow-lg: 0 12px 40px rgba(13, 148, 136, 0.12);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --gap-stack: 6px;
+  --pad-page-x: 16px;
+  --pad-page-y: 8px;
+  --safe-tab: 98px;
+  --font: 'Noto Sans Georgian', system-ui, sans-serif;
+  --header-solid: #0D9488;
+}

@@ -1,0 +1,9 @@
+
+დაბლოკირებული snapshot (არ შეცვალო) — v8-final (2026-06-08):
+
+- index-v8-final.html
+- theme-v8-final.css
+
+სრული ფოლდერი: ..\prototype-v8-final\
+
+მუშა ვერსია: index.html

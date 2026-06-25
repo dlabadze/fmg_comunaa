@@ -1,0 +1,8 @@
+დაბლოკირებული snapshot (არ შეცვალო):
+
+- index-v1.5-final.html
+- theme-v1.5-final.css
+
+სრული ფოლდერი: ..\prototype-v1.5-final\
+
+მუშა ვერსია: index.html

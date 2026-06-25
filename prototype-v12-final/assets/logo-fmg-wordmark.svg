@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 124 50" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="FMG soft">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&amp;display=swap');
+      text{font-family:'Comfortaa',sans-serif}
+    </style>
+  </defs>
+  <text x="0" y="31" font-weight="700" font-size="34" letter-spacing="-0.09em">
+    <tspan fill="#1A2E39">F</tspan><tspan fill="#EC1D25" dx="-3">M</tspan><tspan fill="#1A2E39" dx="-3">G</tspan>
+  </text>
+  <text x="3" y="46" font-weight="400" font-size="12.5" fill="#1A2E39" letter-spacing="0.24em">soft</text>
+</svg>

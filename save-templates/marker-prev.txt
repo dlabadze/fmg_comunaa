@@ -1,0 +1,2 @@
+
+წინა snapshot — {{PREV_VER}} : ..\prototype-{{PREV_VER}}\

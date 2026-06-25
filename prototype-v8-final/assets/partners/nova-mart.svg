@@ -1,0 +1,5 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="мнеа ларт">
+  <rect width="120" height="120" rx="24" fill="#E8ECF2"/>
+  <path d="M60 22l8 22h23l-19 14 7 23-19-14-19 14 7-23-19-14h23z" fill="#4A6278"/>
+  <text x="60" y="104" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="700" fill="#2E4050">мнеа ларт</text>
+</svg>

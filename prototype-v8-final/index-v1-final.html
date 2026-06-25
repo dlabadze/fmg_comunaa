@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>FMG Community</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg-page);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 12px 24px;color:var(--text)}
+    .screen-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;max-width:100%;padding:0 8px}
+    .screen-nav button{font-family:inherit;font-size:.72rem;padding:6px 12px;border:none;background:var(--surface);border-radius:var(--radius-pill);cursor:pointer;box-shadow:var(--shadow)}
+    .screen-nav button.active{background:var(--text);color:#fff}
+    .phone{width:390px;height:844px;max-width:100%;background:var(--bg);border-radius:48px;overflow:hidden;position:relative;box-shadow:var(--shadow-lg),inset 0 0 0 2px #d6d3d1;display:flex;flex-direction:column}
+    .screen-content{flex:1;overflow-y:auto;padding-bottom:var(--safe-tab)}
+    .screen{display:none!important}.screen.active{display:block!important}
+    .screen.screen-auth.active{display:flex!important;flex-direction:column;min-height:100%}
+    .app-topbar{flex-shrink:0;display:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px 16px;background:var(--chrome-dark);z-index:15}
+    .app-topbar.visible{display:flex}
+    .app-topbar-brand{display:flex;align-items:center;gap:10px;min-width:0}
+    .app-topbar-logo{height:34px;width:auto;object-fit:contain}
+    .app-topbar-soft{font-size:.62rem;font-weight:600;color:var(--chrome-on-dark-muted);text-transform:uppercase}
+    .app-topbar-title{font-size:1.02rem;font-weight:700;color:var(--chrome-on-dark)}
+    .app-topbar-actions{display:flex;gap:14px}
+    .app-topbar-btn{width:40px;height:40px;border:none;background:transparent;color:var(--chrome-on-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .app-topbar-btn svg{width:22px;height:22px;stroke:currentColor;fill:none}
+    a.app-topbar-btn{text-decoration:none;color:var(--chrome-on-dark)}
+    .home-hero-wrap{padding:0 16px;background:var(--bg)}
+    .home-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:var(--gap-stack);box-shadow:var(--shadow);width:100%}
+    .home-card.projects-card{padding:10px 0 8px;margin-bottom:0}
+    .projects-scroll{display:flex;gap:6px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory}
+    .projects-scroll::-webkit-scrollbar{display:none}
+    .project-card{flex:0 0 74px;height:94px;border-radius:11px;border:1.5px solid var(--border);overflow:hidden;position:relative;cursor:pointer;background:var(--surface-muted)}
+    .project-card .project-visual{position:absolute;inset:0;background-size:cover;background-position:center}
+    .project-card .project-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.35) 40%,rgba(255,255,255,.9) 72%,rgba(255,255,255,.97) 100%)}
+    .project-card .project-name{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:5px 3px 6px;color:var(--text);font-size:.48rem;font-weight:700;text-align:center;line-height:1.15}
+    .project-card-active{border-color:#DC2626;box-shadow:0 0 0 2px rgba(220,38,38,.22)}
+    .page-pad{display:flex;flex-direction:column;gap:var(--gap-stack);padding:var(--pad-page-y) var(--pad-page-x) 4px}
+    .page-pad>.home-card,.page-pad>.quick-grid,.page-pad>.feed-card{margin-bottom:0}
+    .greet-card h1{font-size:1.15rem;font-weight:700}
+    .greet-card .unit{font-size:.78rem;color:var(--text-muted);margin-top:4px}
+    .greet-card .unit-project{font-size:.85rem;font-weight:600;margin-top:6px}
+    .manager-lbl{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:4px}
+    .btn-manager-msg{width:100%;margin-top:8px;padding:9px 14px;border:1px solid #44403C;border-radius:var(--radius-pill);background:var(--surface);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+    .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap-stack)}
+    .quick-card{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:84px;padding:12px 6px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:none;font-family:inherit;cursor:pointer}
+    .quick-card .bubble{width:44px;height:44px;border-radius:14px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--surface-muted);border:1px solid var(--border)}
+    .quick-card span{font-size:.65rem;font-weight:600}
+    .feed-card{background:var(--surface);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border:none;width:100%;text-align:left;font-family:inherit;cursor:pointer}
+    .tag{display:inline-block;font-size:.65rem;font-weight:600;padding:4px 10px;border-radius:var(--radius-pill);margin-bottom:6px}
+    .tag-teal,.tag-violet{background:var(--primary-soft);color:var(--primary-dark);border:1px solid rgba(13,148,136,.15)}
+    .feed-card h4{font-size:.95rem;font-weight:600;margin-bottom:4px}
+    .feed-card p{font-size:.8rem;color:var(--text-muted)}
+    .tab-page-head{padding:14px 20px 6px;background:var(--bg)}
+    .tab-page-head h2{font-size:1.1rem;font-weight:700}
+    .sub-nav{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--surface);position:sticky;top:0;z-index:10}
+    .sub-nav button{border:none;background:none;font-size:1.25rem;cursor:pointer;font-family:inherit}
+    .balance{background:var(--surface);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow);margin-bottom:14px;text-align:center}
+    .balance .sum{font-size:1.75rem;font-weight:700}
+    .pay-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+    .pay-tab{padding:8px 14px;border-radius:var(--radius-pill);border:2px solid var(--border);background:var(--surface);font-family:inherit;font-size:.8rem;cursor:pointer}
+    .pay-tab.on{border-color:var(--primary);background:var(--primary-soft);font-weight:600}
+    .pay-panel{display:none}.pay-panel.active{display:block}
+    .menu-link{display:flex;align-items:center;gap:14px;width:100%;padding:16px;background:var(--surface);border-radius:var(--radius);margin-bottom:8px;border:none;font-family:inherit;font-size:.95rem;cursor:pointer;text-align:left}
+    .menu-list{padding:0 20px}
+    .profile-head{text-align:center;padding:24px 20px;background:var(--surface);border-radius:0 0 28px 28px}
+    .avatar{width:72px;height:72px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;margin:0 auto 12px}
+    .projects-all-link{display:flex;align-items:center;gap:14px;margin:4px 20px 12px;padding:14px 16px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);width:calc(100% - 40px);font-family:inherit;cursor:pointer}
+    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:8px 20px 24px}
+    .project-card-lg{height:118px;border-radius:16px;border:1.5px solid var(--border);overflow:hidden;position:relative;cursor:pointer;width:100%;background:var(--surface-muted)}
+    .project-card-lg .project-name{font-size:.68rem;padding:8px}
+  </style>
+</head>
+<body>
+  <nav class="screen-nav" id="nav"></nav>
+  <div class="phone">
+    <header class="app-topbar" id="appTopbar">
+      <div class="app-topbar-brand">
+        <img class="app-topbar-logo" src="assets/fmg-logo.png" alt="FMG Soft" />
+        <div>
+          <div class="app-topbar-soft">FMG Soft</div>
+          <div class="app-topbar-title">FMG Community</div>
+        </div>
+      </div>
+      <div class="app-topbar-actions">
+        <button type="button" class="app-topbar-btn" data-goto="notifications" aria-label="შეტყობინებები"><svg viewBox="0 0 24 24" stroke-width="1.75"><path d="M12 3a7 7 0 0 0-7 7v2.5l-2 2V20h4v-3h10v3h4v-5.5l-2-2V10a7 7 0 0 0-7-7Z"/><path d="M9 20v1a3 3 0 0 0 6 0v-1"/></svg></button>
+        <a class="app-topbar-btn" href="tel:+995322000000" aria-label="დარეკვა"><svg viewBox="0 0 24 24" stroke-width="1.75"><path d="M5 4h4l2 5-2 1a11 11 0 0 0 5 5l1-2 5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></a>
+      </div>
+    </header>
+    <div class="screen-content" id="screenContent">
+      <div class="screen screen-auth" data-screen="login">
+        <div style="flex:1;background:var(--surface);padding:48px 24px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border-radius:0 0 32px 32px">
+          <div style="font-size:2rem;margin-bottom:16px">🏘️</div>
+          <h2>FMG Community</h2>
+          <p style="color:var(--text-muted);margin-top:8px">აპლიკაციაში შესვლა</p>
+        </div>
+        <div style="padding:28px 24px;background:var(--bg)">
+          <p style="margin-bottom:12px;font-size:.85rem;color:var(--text-muted)" id="loginHint">დემო: <strong>nino</strong> / <strong>1234</strong></p>
+          <button type="button" id="btnLogin" style="width:100%;padding:14px;border-radius:var(--radius-pill);border:1px solid var(--border);background:var(--surface);font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer">შესვლა</button>
+        </div>
+      </div>
+      <div class="screen active" data-screen="menu">
+        <div class="home-hero-wrap"><div class="home-card projects-card"><div class="projects-scroll" id="projectsScrollMenu"></div></div></div>
+        <div class="page-pad">
+          <div class="home-card greet-card"><h1>გამარჯობა, ნინო</h1><p class="unit">ბინა 12 · კორპუსი B</p><p class="unit-project" id="greetProjectName">ეფემჯი რეზიდენსი</p></div>
+          <div class="home-card"><span class="manager-lbl">პირადი მენეჯერი:</span><strong>გიორგი გიორგიძე</strong><button type="button" class="btn-manager-msg" data-goto="service-new">მიწერე მენეჯერს</button></div>
+          <div class="quick-grid">
+            <button type="button" class="quick-card" data-goto="property"><div class="bubble">🔒</div><span>დაშვება</span></button>
+            <button type="button" class="quick-card" data-goto="service"><div class="bubble">🎫</div><span>თიქეთი</span></button>
+            <button type="button" class="quick-card" data-goto="payments"><div class="bubble">💳</div><span>ბალანსი</span></button>
+          </div>
+          <button type="button" class="feed-card" data-goto="news-detail"><span class="tag tag-teal">განცხადება</span><h4>ლიფტის პროფილაქტიკა</h4><p>შაბათს 10:00–14:00</p></button>
+          <button type="button" class="feed-card" data-goto="marketing"><span class="tag tag-violet">ღონისძიება</span><h4>ეზოს დასუფთავება</h4><p>შაბათი 11:00</p></button>
+        </div>
+      </div>
+      <div class="screen" data-screen="profile">
+        <div class="profile-head"><div class="avatar">ნ</div><h2>ნინო ბერიძე</h2><p style="color:var(--text-muted);font-size:.9rem">nino@email.com</p></div>
+        <div class="menu-list">
+          <button class="menu-link" data-goto="property">ქონება ›</button>
+          <button class="menu-link" data-goto="payments">გადახდები ›</button>
+          <button class="menu-link" data-goto="settings">პარამეტრები ›</button>
+        </div>
+        <div style="padding:24px;text-align:center"><button data-goto="login" id="btnLogout" style="border:none;background:none;color:var(--error);font-family:inherit;font-weight:600;cursor:pointer">გამოსვლა</button></div>
+      </div>
+      <div class="screen" data-screen="property">
+        <div class="tab-page-head"><h2>ქონება</h2></div>
+        <div class="projects-scroll" id="projectsScrollProperty" style="padding:0 16px 8px"></div>
+        <button type="button" class="projects-all-link" data-goto="projects-all">ყველა პროექტი <span style="margin-left:auto">›</span></button>
+        <div class="page-pad"><p><strong>ბინა 12</strong> · კორპუსი B</p><p id="propertyProjectName" style="margin-top:8px;font-weight:700">ეფემჯი რეზიდენსი</p></div>
+      </div>
+      <div class="screen" data-screen="service"><div class="tab-page-head"><h2>სერვისი</h2></div><div class="page-pad"><p style="color:var(--text-muted)">მოთხოვნების სია</p></div></div>
+      <div class="screen" data-screen="service-new"><div class="sub-nav"><button data-goto="service">←</button><h2>ახალი მოთხოვნა</h2></div><div class="page-pad"><p>აღწერე პრობლემა</p></div></div>
+      <div class="screen" data-screen="payments">
+        <div class="tab-page-head"><h2>ფინანსები</h2></div>
+        <div class="page-pad">
+          <div class="balance"><div style="color:var(--text-muted)">სულ</div><div class="sum">245 ₾</div></div>
+          <div class="pay-tabs"><button type="button" class="pay-tab on" data-pay-tab="service">მომსახურება</button><button type="button" class="pay-tab" data-pay-tab="comm">საკომუნიკაციო</button></div>
+          <div class="pay-panel active" data-pay-panel="service"><button class="menu-link"><span>დაცვა</span><strong>45 ₾</strong></button></div>
+          <div class="pay-panel" data-pay-panel="comm"><button class="menu-link"><span>ინტერნეტი</span><strong>35 ₾</strong></button></div>
+        </div>
+      </div>
+      <div class="screen" data-screen="marketing"><div class="tab-page-head"><h2>Community</h2></div><div class="page-pad"><p>ღონისძიებები და სიახლეები</p></div></div>
+      <div class="screen" data-screen="projects-all"><div class="sub-nav"><button data-goto="property">←</button><h2>ყველა პროექტი</h2></div><div class="projects-grid" id="projectsGridAll"></div></div>
+      <div class="screen" data-screen="notifications"><div class="sub-nav"><button data-goto="menu">←</button><h2>შეტყობინებები</h2></div><div class="page-pad"><p>შეტყობინებები</p></div></div>
+      <div class="screen" data-screen="news-detail"><div class="sub-nav"><button data-goto="menu">←</button><h2>სიახლე</h2></div><div class="page-pad"><span class="tag tag-teal">განცხადება</span><h3 style="margin:12px 0">ლიფტის პროფილაქტიკა</h3></div></div>
+      <div class="screen" data-screen="settings"><div class="sub-nav"><button data-goto="profile">←</button><h2>პარამეტრები</h2></div><div class="menu-list"><button class="menu-link">Push შეტყობინებები</button></div></div>
+    </div>
+    <style>
+      .tabs{position:absolute;bottom:0;left:0;right:0;height:var(--safe-tab);background:var(--chrome-dark);display:flex;align-items:flex-end;justify-content:center;padding:0 6px 18px;z-index:20}
+      .tabs-side{display:flex;flex:1;justify-content:space-around;align-items:flex-end}
+      .tabs-left{padding-right:32px}.tabs-right{padding-left:32px}
+      .tab{display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;font-family:inherit;font-size:.48rem;color:var(--chrome-on-dark-muted);cursor:pointer;flex:1;max-width:58px;padding:2px 1px}
+      .tab .ic{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--chrome-on-dark)}
+      .tab .tab-icon{width:28px;height:28px;stroke:currentColor;fill:none}
+      .tab.on{color:var(--chrome-on-dark);font-weight:600}
+      .tab.on .ic{background:var(--primary);color:#fff}
+      .tab-fab{position:absolute;left:50%;top:-22px;transform:translateX(-50%);width:56px;height:56px;border-radius:50%;background:#DC2626;color:#fff;border:4px solid var(--chrome-dark);font-size:1.85rem;font-weight:300;cursor:pointer;z-index:25;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(220,38,38,.35)}
+    </style>
+    <nav class="tabs" id="tabBar">
+      <div class="tabs-side tabs-left">
+        <button class="tab" data-tab="profile"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" stroke-width="1.75"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>მთავარი</button>
+        <button class="tab" data-tab="property"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" stroke-width="1.75"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-4h6v4"/></svg></span>ქონება</button>
+        <button class="tab" data-tab="service"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" stroke-width="1.75"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>სერვისი</button>
+      </div>
+      <button type="button" class="tab-fab" data-goto="service-new">+</button>
+      <div class="tabs-side tabs-right">
+        <button class="tab" data-tab="finances"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" stroke-width="1.75"><path d="M19 7H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M19 7V5a2 2 0 0 0-2-2H7"/><circle cx="17" cy="14" r="1.5"/></svg></span>ფინანსები</button>
+        <button class="tab" data-tab="community"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" stroke-width="1.75"><path d="M4 19h16a2 2 0 0 0 2-2V7H6a2 2 0 0 0-2 2v10Z"/><path d="M4 7V5a2 2 0 0 1 2-2h12"/></svg></span>Community</button>
+        <button class="tab on" data-tab="menu"><span class="ic"><svg class="tab-icon" viewBox="0 0 24 24" stroke-width="1.75"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg></span>მენიუ</button>
+      </div>
+    </nav>
+  </div>
+  <script>
+    const AUTH_KEY='samezoblo_session',PROJECT_KEY='samezoblo_project';
+    const tabs=['profile','property','service','finances','community','menu'];
+    const tabToScreen={profile:'profile',property:'property',service:'service',finances:'payments',community:'marketing',menu:'menu'};
+    const screenToTab={menu:'menu',profile:'profile',property:'property',service:'service','service-new':'service',payments:'finances',marketing:'community',notifications:'menu','news-detail':'menu',settings:'profile'};
+    const noTab=['login','service-new','service-detail','documents','projects-all','notifications','news-detail','settings'];
+    const screens=[{id:'login',label:'Login'},{id:'menu',label:'მენიუ'},{id:'profile',label:'მთავარი'},{id:'property',label:'ქონება'},{id:'service',label:'სერვისი'},{id:'payments',label:'ფინანსები'},{id:'marketing',label:'Community'}];
+    const PROJECTS=[
+      {id:'emoji',name:'ეფემჯი რეზიდენსი',photo:'assets/projects/emoji.jpg'},
+      {id:'tower',name:'FMG თაუერი',photo:'assets/projects/tower.jpg'},
+      {id:'green',name:'გრინ ჰილსი',photo:'https://images.unsplash.com/photo-1560448204-e02f11c2d0e2?auto=format&fit=crop&w=320&h=420&q=85'},
+      {id:'sea',name:'საზღვაო რეზიდენსი',photo:'https://images.unsplash.com/photo-1518780664697-9e099752bf1b?auto=format&fit=crop&w=320&h=420&q=85'},
+      {id:'panorama',name:'პანორამა პარკი',photo:'https://images.unsplash.com/photo-1600596542815-ffad4c153af9?auto=format&fit=crop&w=320&h=420&q=85'},
+      {id:'verona',name:'ვერონა ჰილსი',photo:'https://images.unsplash.com/photo-1600047509807-ba8f84d030cd?auto=format&fit=crop&w=320&h=420&q=85'},
+      {id:'city',name:'სიტი ლაინი',photo:'https://images.unsplash.com/photo-1477959858617-67f85cf4f44d?auto=format&fit=crop&w=320&h=420&q=85'},
+      {id:'lake',name:'ლეიკ ვიუ',photo:'assets/projects/lake.jpg'}
+    ];
+    function getSelectedProjectId(){return localStorage.getItem(PROJECT_KEY)||'emoji'}
+    function setSelectedProjectId(id){localStorage.setItem(PROJECT_KEY,id);updatePropertyProjectUI()}
+    function updatePropertyProjectUI(){
+      const p=PROJECTS.find(x=>x.id===getSelectedProjectId())||PROJECTS[0];
+      const n=document.getElementById('propertyProjectName'),g=document.getElementById('greetProjectName');
+      if(n)n.textContent=p.name;if(g)g.textContent=p.name;
+      document.querySelectorAll('[data-project-id]').forEach(c=>c.classList.toggle('project-card-active',c.dataset.projectId===p.id));
+    }
+    function projectCardHTML(p,large){
+      const cls=large?'project-card-lg project-card':'project-card';
+      return `<button type="button" class="${cls}" data-project-id="${p.id}" data-goto="property"><div class="project-visual" style="background-image:url('${p.photo}')"></div><div class="project-overlay"></div><span class="project-name">${p.name}</span></button>`;
+    }
+    function renderProjects(){
+      ['projectsScrollMenu','projectsScrollProperty'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=PROJECTS.map(p=>projectCardHTML(p,false)).join('')});
+      const g=document.getElementById('projectsGridAll');if(g)g.innerHTML=PROJECTS.map(p=>projectCardHTML(p,true)).join('');
+      updatePropertyProjectUI();
+    }
+    renderProjects();
+    const nav=document.getElementById('nav');
+    screens.forEach(s=>{const b=document.createElement('button');b.textContent=s.label;b.dataset.screen=s.id;if(s.id==='menu')b.classList.add('active');b.onclick=()=>showScreen(s.id);nav.appendChild(b)});
+    function showScreen(id){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.dataset.screen===id));
+      document.querySelectorAll('.screen-nav button').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
+      const tabId=screenToTab[id]||(tabs.includes(id)?id:null);
+      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tabId));
+      const hide=id==='login'||noTab.includes(id);
+      document.getElementById('tabBar').style.display=hide?'none':'flex';
+      document.getElementById('appTopbar').classList.toggle('visible',!hide);
+      if(id==='property'||id==='menu')updatePropertyProjectUI();
+    }
+    document.getElementById('btnLogin').onclick=()=>{localStorage.setItem(AUTH_KEY,'1');showScreen('menu')};
+    document.getElementById('btnLogout')?.addEventListener('click',()=>{localStorage.removeItem(AUTH_KEY);showScreen('login')});
+    document.getElementById('tabBar').querySelectorAll('.tab').forEach(t=>t.onclick=()=>showScreen(tabToScreen[t.dataset.tab]));
+    document.getElementById('screenContent').addEventListener('click',e=>{
+      const pb=e.target.closest('[data-project-id]');if(pb){setSelectedProjectId(pb.dataset.projectId);showScreen('property');e.preventDefault();return}
+      const g=e.target.closest('[data-goto]');if(g){e.preventDefault();showScreen(g.dataset.goto)}
+    });
+    document.querySelectorAll('.pay-tab').forEach(btn=>btn.onclick=()=>{
+      document.querySelectorAll('.pay-tab').forEach(b=>b.classList.toggle('on',b===btn));
+      document.querySelectorAll('.pay-panel').forEach(p=>p.classList.toggle('active',p.dataset.payPanel===btn.dataset.payTab));
+    });
+    showScreen(localStorage.getItem(AUTH_KEY)==='1'?'menu':'login');
+  </script>
+</body>
+</html>

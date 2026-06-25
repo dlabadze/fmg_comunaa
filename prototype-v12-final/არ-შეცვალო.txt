@@ -1,0 +1,10 @@
+﻿საბოლოო ვერსია: v12-final (2026-06-09)
+
+დაბლოკირებული snapshot (არ შეცვალო):
+
+- index-v12-final.html
+- theme-v12-final.css
+
+მუშა ვერსია: index.html
+
+სრული ფოლდერი: W2 APP\prototype-v12-final\

@@ -1,0 +1,8 @@
+დაბლოკირებული snapshot ფაილები (არ შეცვალო):
+
+- index-v1.4-final.html
+- theme-v1.4-final.css
+
+სრული ფოლდერის ასლი: ..\prototype-v1.4-final\
+
+მუშა ვერსია (ცვლილებებისთვის): index.html

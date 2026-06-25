@@ -1,0 +1,7 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="сизи фкнри">
+  <rect width="120" height="120" rx="24" fill="#E8ECF2"/>
+  <rect x="28" y="34" width="64" height="12" rx="3" fill="#5A7088"/>
+  <rect x="28" y="50" width="64" height="12" rx="3" fill="#7A90A4"/>
+  <rect x="28" y="66" width="64" height="12" rx="3" fill="#5A7088"/>
+  <text x="60" y="104" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="700" fill="#3A5060">сизи фкнри</text>
+</svg>

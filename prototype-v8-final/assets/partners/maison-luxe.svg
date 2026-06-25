@@ -1,0 +1,5 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Maison Luxe">
+  <rect width="120" height="120" rx="16" fill="#F3EDE4"/>
+  <path d="M30 88h60M36 34l24 18 24-18v54H36V34z" fill="none" stroke="#5E4A38" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="60" cy="52" r="6" fill="#C9A86C"/>
+</svg>

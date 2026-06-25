@@ -1,0 +1,17 @@
+/* Archi-style theme — სამეზობლოს */
+:root {
+  --primary: #2F6FED;
+  --primary-dark: #1A3D6B;
+  --primary-light: #5B8DEF;
+  --bg: #F0F4F8;
+  --surface: #FFFFFF;
+  --text: #1A1A1A;
+  --text-muted: #64748B;
+  --border: #E2E8F0;
+  --empty-accent: #D81B60;
+  --success: #059669;
+  --shadow: 0 2px 16px rgba(26, 61, 107, 0.08);
+  --radius: 14px;
+  --radius-lg: 20px;
+  --header-h: 140px;
+}

@@ -1,0 +1,2 @@
+
+წინა snapshot — v8-final (2026-06-08): ..\prototype-v8-final\

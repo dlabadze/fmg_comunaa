@@ -1,0 +1,7 @@
+﻿
+დაბლოკირებული snapshot (არ შეცვალო):
+
+- index-v1.6-final.html
+- theme-v1.6-final.css
+
+მუშა ვერსია: index.html

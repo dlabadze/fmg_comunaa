@@ -1,0 +1,9 @@
+
+დაბლოკირებული snapshot (არ შეცვალო) — v10-final (2026-06-09):
+
+- index-v10-final.html
+- theme-v10-final.css
+
+სრული ფოლდერი: ..\prototype-v10-final\
+
+მუშა ვერსია: index.html

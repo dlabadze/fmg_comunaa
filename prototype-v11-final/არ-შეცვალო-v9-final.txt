@@ -1,0 +1,9 @@
+
+დაბლოკირებული snapshot (არ შეცვალო) — v9-final (2026-06-09):
+
+- index-v9-final.html
+- theme-v9-final.css
+
+სრული ფოლდერი: ..\prototype-v9-final\
+
+მუშა ვერსია: index.html

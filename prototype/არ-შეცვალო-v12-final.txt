@@ -1,0 +1,8 @@
+﻿დაბლოკირებული snapshot (არ შეცვალო) — v12-final (2026-06-09):
+
+- index-v12-final.html
+- theme-v12-final.css
+
+სრული ფოლდერი: ..\prototype-v12-final\
+
+მუშა ვერსია: index.html

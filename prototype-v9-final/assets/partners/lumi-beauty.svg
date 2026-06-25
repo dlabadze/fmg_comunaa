@@ -1,0 +1,5 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="���� �����">
+  <circle cx="60" cy="60" r="54" fill="#FFE5DC"/>
+  <path d="M60 24l6 18h19l-15 11 6 18-16-12-16 12 6-18-15-11h19z" fill="#B45E4A"/>
+  <text x="60" y="98" text-anchor="middle" font-family="Helvetica Neue,Arial,sans-serif" font-size="13" font-weight="700" fill="#8A4038">���� �����</text>
+</svg>

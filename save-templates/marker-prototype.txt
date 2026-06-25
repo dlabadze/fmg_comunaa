@@ -1,0 +1,9 @@
+
+დაბლოკირებული snapshot (არ შეცვალო) — {{VER}} ({{DATE}}):
+
+- index-{{VER}}.html
+- theme-{{VER}}.css
+
+სრული ფოლდერი: ..\prototype-{{VER}}\
+
+მუშა ვერსია: index.html
