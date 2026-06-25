@@ -1,6 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/prototype/index.html" },
-    { "source": "/:path*", "destination": "/prototype/:path*" }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "installCommand": ""
 }

@@ -1,0 +1,7 @@
+{
+  "name": "fmg-comuna",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-public.js"
+  }
+}
